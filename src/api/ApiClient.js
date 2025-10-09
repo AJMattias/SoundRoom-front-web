@@ -1,6 +1,8 @@
+/* eslint-disable no-unused-vars */
 import axios from "axios"
 import { getJwtToken } from "../storage/LocalStorage.js"
 import { getBaseUrl } from "../network/Endpoint.js"
+import { getProdctionUrl } from "../network/Endpoint.js"
 import { ApiException } from "../exception/ApiException.js"
 import { convertIsoDates } from "../utils/dateHelper.js"
 
@@ -55,7 +57,8 @@ axiosInstance.interceptors.response.use(
  * @returns {String} URL absoluta.
  */
 function transformUrl(path) {
-    return getBaseUrl() + (path.startsWith("/") ? path : `/${path}`);
+    //return getBaseUrl() + (path.startsWith("/") ? path : `/${path}`);
+    return getProdctionUrl() + (path.startsWith("/") ? path : `/${path}`);
 }
 
 /**

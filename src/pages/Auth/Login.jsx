@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import NavBar from "../../components/NavBar";
 import { useForm } from "react-hook-form";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import UsersService from "../../services/UsersService";
 
@@ -9,53 +9,61 @@ const Login = () => {
 
   const { register, handleSubmit, formState: { errors } } = useForm()
   const { login, authState } =  useContext(AuthContext)
-  const [perfilName, setPerfilName] = useState('')
+  // const [perfilName, setPerfilName] = useState('')
   const navigate = useNavigate()
 
   const onSubmit = async(values) =>{
+
+    try{
       console.log("form values: ", values)
       console.log('values.email,values.password: ',values.email, values.password, )
   
       const userData = await UsersService.login(values.email, values.password);
 
-      // The actual user and token data are inside axiosResponse.data
-      //const userData = axiosResponse.data; 
+      // guardo en contexto
+      login({ user: userData.user, token: userData.token });
 
-      console.log('login: ', userData); // This will now show your token and user object directly
-      
-      // Access user and token correctly from userData
-      console.log('user object: ', userData.user);
-      if(userData.user.idPerfil && userData.user.idPerfil.name) {
-        console.log('user.idPerfil.name: ', userData.user.idPerfil.name);
-        setPerfilName(userData.user.idPerfil.name);
-      }
-      
-     login({ user: userData.user, token: userData.token });
-    }
+      // navegación inmediata según perfil
+      const perfil = userData.user?.idPerfil?.name?.trim().toLowerCase();
+      const isAdmin = userData.user?.isAdmin;
 
-   useEffect(() => {
+      console.log("Perfil en onSubmit:", perfil);
+      console.log("isAdmin en onSubmit:", isAdmin);
 
-     console.log('useEffect ejecutándose. isAuthenticated:', authState.isAuthenticated, 'isAdmin:', authState.user?.user?.isAdmin, 'perfilName:', perfilName);
-
-    if (authState.isAuthenticated) {
-      console.log('Usuario autenticado.');
-      if (authState.user?.user?.isAdmin) {
-        console.log('Es administrador. Navegando a /admin');
+      if (isAdmin) {
         navigate("/admin");
-      } else if (perfilName === "Sala de ensayo") {
-        console.log('Perfil es Sala de ensayo. Navegando a /owner/create-room/');
-        try {
-          navigate("/owner/create-room");
-        } catch (error) {
-          console.error('Error al navegar:', error);
-        }
+      } else if (perfil === "sala de ensayo") {
+        navigate("/owner");
+      } else  if(perfil === "artista"){
+        navigate("/artista");
       } else {
-        console.log('No se cumple ninguna condición de navegación específica. Perfil:', perfilName);
+        console.log("Perfil no reconocido, no se redirige");
       }
-    } else {
-      console.log('Usuario no autenticado.');
+      
+      //login({ user: userData.user, token: userData.token });
+      
+    }catch(err){
+        console.error("Error en login:", err);
     }
-  }, [authState.isAuthenticated, authState.user?.user?.isAdmin, perfilName, navigate]); // Mantenemos navigate en las dependencias por precaución
+  }
+
+  useEffect(() => {
+    if (authState.isAuthenticated) {
+    const user = authState.user?.user;
+    const perfil = user?.idPerfil?.name?.trim().toLowerCase();
+    const isAdmin = user?.isAdmin;
+
+    console.log("Perfil en useEffect:", perfil);
+    console.log("isAdmin en useEffect:", isAdmin);
+
+    if (isAdmin) {
+      navigate("/admin");
+    } else if (perfil === "sala de ensayo") {
+      navigate("/owner/create-room");
+    }
+  }
+  }, [authState.isAuthenticated, authState.user, navigate]);
+
   return (
     <div>
       <NavBar />
