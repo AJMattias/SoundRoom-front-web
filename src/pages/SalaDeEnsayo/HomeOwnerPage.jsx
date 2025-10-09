@@ -27,6 +27,7 @@ const HomeOwnerPage = () => {
   const [reservasSemana, setReservasSemana] = useState(0)
 
   useEffect(() => {
+    console.log('cargando pagina sala de ensayo home')
     // Fetch data for salasOwner, nextReservations, and opiniones
     const fetchData = async () => {
       try {
@@ -72,26 +73,28 @@ const HomeOwnerPage = () => {
     };
 
     fetchData();
-  }, []);
+  }, );
   
 
   return (
     
       <div className="container mx-5">
-          <div className="col-10 d-flex flex-column rounded-3 bg-light p-5 mt-1">
+          <div className="col-10 bg-white d-flex flex-column rounded-3 bg-light p-5 mt-1">
             {/* <div>
               <Alerta tipo="error" mensaje={error} />
             </div> */}
             <h2>Hola, {user.name} {user.last_name}!</h2>
-            <div className="bg-body-secondary rounded-3 py-2 mt-3">
+            <div className="rounded-3 py-2 mt-3 border-1 border-secondary">
               <Cards_Resumen reservas={reservasSemana} ingresos={gananciasSemana} calificacion={promedio}/>
             </div>
-            <div className="bg-body-secondary rounded-3 py-3 px-3 mt-3">
+            <div className="border border-border-secondary rounded-3 py-3 px-3 mt-4">
               <h3>Mis Salas</h3>
+              <hr />
               <MisSalasCards salas={salasOwner}></MisSalasCards>
             </div>
-            <div className="bg-body-secondary rounded-3 py-3 px-3 mt-3">
+            <div className="border border-border-secondary rounded-3 py-3 px-3 mt-4">
               <h3>Próximas Reservas</h3>
+              <hr />
               {/* Aquí puedes mapear las próximas reservas y mostrarlas */}
               <div>
                 <table className="table rounded-3">
@@ -130,8 +133,9 @@ const HomeOwnerPage = () => {
               {/* Acciones de Owner */}
               
             </div>
-            <div className="bg-body-secondary rounded-3 py-3 px-3 mt-3">
+            <div className="border border-border-secondary rounded-3 py-3 px-3 mt-4">
                 <h3>Acciones</h3>
+                <hr />
                 <div className="col-12 d-flex justify-content-between">
                   <button className="btn btn-warning"
                     onClick={()=> navigate("/owner/create-room")}>Agregar Sala</button>
@@ -139,7 +143,7 @@ const HomeOwnerPage = () => {
                   <button className="btn btn-warning">Ver Reportes</button>
                 </div>
             </div>
-            <div className="bg-body-secondary rounded-3 py-3 px-3 mt-3">
+            <div className="border border-border-secondary rounded-3 py-3 px-3 mt-4">
               <h4>Opiniones</h4>
               {opiniones && opiniones.length > 0 ? (
                 opiniones.map((opinion, index) => (

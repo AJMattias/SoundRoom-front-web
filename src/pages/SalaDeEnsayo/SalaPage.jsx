@@ -77,11 +77,11 @@ const SalaPage = () => {
     }
 
     return (
-        <div className="mx-auto flex flex-col col-11 items-center justify-center min-h-screen">
+        <div className="mx-auto flex flex-col col-10 bg-white rounded-3 items-center justify-center min-h-screen">
             {error && <Alerta tipo="error" mensaje={error} />}
-            <div className="rounded-3 bg-body-secondary w-100 mx-2 my-3">
+            <div className=" rounded-3 w-100 mx-2 my-3">
                 {/* header sala */}
-                <div className="row bg-body-white w-100 p-3">
+                <div className="row w-100 p-3">
                     <div className="d-flex col-9 flex-column">
                         <h3 className="text-black fs-1 fw-bold">{sala.nameSalaEnsayo}</h3>
                         <h4>{sala.calleDireccion}</h4>
@@ -109,38 +109,69 @@ const SalaPage = () => {
                 {/* center carrusel de imagenes */}
                 <div className="row bg-body-white mx-3 justify-content-center align-items-center">
                     <CarruselImagenes images={sala.imagenes ||[]} />
+                    <hr className="mt-5"/>
                 </div>
-                <div className="row bg-body-white mx-3 justify-content-center align-items-center ms-4 mt-3">
-                    <h4>Descripcion</h4>
-                    <p className="text-black">{sala.descripcion}</p>
-                </div>
-                <div className="w-100 row bg-body-white mx-3 justify-content-center align-items-center ms-4 mt-3">
-                    <h4>Comodidades</h4>
-                      {sala.comodidades && sala.comodidades.length > 0 ? (
-                        <div className="d-flex flex-wrap gap-2">
-                            {sala.comodidades.map((comodity, index) => (
-                                <span
-                                    key={index} // 'key' es importante para que React identifique cada elemento de la lista de forma única
-                                    className="badge bg-warning text-dark p-2" 
-                                >
-                                    {comodity}
-                                </span>
-                            ))}
+                 {/* --- NUEVA ESTRUCTURA PARA DESCRIPCION, COMODIDADES, OPINIONES Y HORARIOS --- */}
+                <div className="row flex-grow- mx-2"> {/* Usamos flex-grow-1 si quieres que ocupe el espacio vertical restante */}
+                    {/* Columna principal (Descripción, Comodidades, Opiniones) */}
+                    <div className="col-md-7 px-4 py-3"> {/* col-md-8 para ocupar 8 de 12 columnas en pantallas medianas en adelante */}
+                        <div className="mb-4"> {/* Añadir margen inferior para separar secciones */}
+                            <h4>Descripción</h4>
+                            <p className="text-black">{sala.descripcion}</p>
+                            <hr className="mt-3 w-75"/>
                         </div>
-                    ) : (
-                        <p>No se han especificado comodidades para esta sala.</p>
-                    )}
+
+                        <div className="mb-4">
+                            <h4>Comodidades</h4>
+                            {sala.comodidades && sala.comodidades.length > 0 ? (
+                                <div className="d-flex flex-wrap gap-2">
+                                    {sala.comodidades.map((comodity, index) => (
+                                        <span
+                                            key={index}
+                                            className="badge bg-warning text-dark p-2"
+                                        >
+                                            {comodity}
+                                        </span>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p>No se han especificado comodidades para esta sala.</p>
+                            )}
+                            <hr className="mt-3 w-75"/>
+                        </div>
+
+                        <div>
+                            <h4>Opiniones</h4>
+                            {sala.opiniones && sala.opiniones.length > 0 ? (
+                                sala.opiniones.map((opinion, index) => (
+                                    <OpinionCard key={index} opinion={opinion} />
+                                ))
+                            ) : (
+                                <p>No hay opiniones disponibles para esta sala.</p>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Columna Aside (Horarios) */}
+                    <div className="col-md-4 px-4 py-3 rounded-bottom-3 border rounded-3"> {/* col-md-4 para el aside, color de fondo para distinguirlo */}
+                        <h4>Horarios</h4>
+                        <div className="d-flex flex-column">
+                            {sala.horarios && sala.horarios.length > 0 ? (
+                                sala.horarios.map((horario, index) => (
+                                    <div key={index} className="d-flex justify-content-start align-items-center gap-2 mb-1">
+                                        {/* ✨ CAMBIO PRINCIPAL AQUÍ ✨ */}
+                                        <span>
+                                            <strong className="text-bold">{horario.dia}: </strong>{horario.hsInicio} - {horario.hsFin}
+                                        </span>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No hay horarios disponibles para esta sala.</p>
+                            )}
+                        </div>
+                    </div>
                 </div>
-                <div className="w-100 row bg-body-white mx-3 justify-content-center align-items-center ms-4 mt-3 mb-3">
-                    <h4>Opiniones</h4>
-                    {sala.opiniones && sala.opiniones.length > 0 ? (
-                        sala.opiniones.map((opinion, index) => (
-                            <OpinionCard key={index} opinion={opinion} />
-                        ))
-                        ) : (
-                        <p>No hay opiniones disponibles para esta sala.</p>
-                    )}
-                </div>
+                {/* --- FIN NUEVA ESTRUCTURA --- */}
             </div>
         </div>
     )

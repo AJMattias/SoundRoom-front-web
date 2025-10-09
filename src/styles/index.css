@@ -1,0 +1,12 @@
+/* Hover moderno para los links del sidebar */
+.nav-link.text-dark {
+  transition: all 0.3s ease;
+}
+
+.nav-link.text-dark:hover {
+  background-color: #ffc107; /* amarillo Bootstrap */
+  color: #fff !important;
+  transform: translateX(5px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  border-radius: 8px;
+}

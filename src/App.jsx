@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import './styles/index.css';
 import { BrowserRouter, Route, Router, Routes } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthProvider'
 import Login from './pages/Auth/Login'
@@ -30,6 +31,14 @@ import OwnerLayout from './pages/SalaDeEnsayo/OwnerLayout'
 import HomeOwnerPage from './pages/SalaDeEnsayo/HomeOwnerPage'
 import CreateSalaPage from './pages/SalaDeEnsayo/CreateSalaPage'
 import SalaPage from './pages/SalaDeEnsayo/SalaPage'
+import Reportes from './pages/SalaDeEnsayo/Reportes'
+import CalificacionesPage from './pages/SalaDeEnsayo/CalificacionesPage'
+import ReservasPage from './pages/SalaDeEnsayo/ReservasPage'
+import ArtistaHomePage from './pages/Artista/ArtistaHomePage'
+import ReservasArtistaPage from './pages/Artista/ReservasArtistaPage'
+import OpinionsToArtista from './pages/Artista/OpinionsToArtistaPage';
+import OpinionsToArtistaPage from './pages/Artista/OpinionsToArtistaPage';
+import SearchSalasPage from './pages/Artista/SearchSalasPage';
 
 function App() {
   
@@ -74,11 +83,11 @@ function App() {
               <Route path="/owner/create-room" element={<CreateSalaPage />} />
               <Route path="/owner/sala-ensayo/:id" element={<SalaPage />} />
               <Route path="/owner/home" element={<HomeOwnerPage />} />
-              <Route path="/owner/my-rooms" element={<HomeOwnerPage />} />
+              <Route path="/owner/mis-salas" element={<HomeOwnerPage />} />
               <Route path="/owner/edit-room/:id" element={<CreateSalaPage />} />
-              {/* <Route path="/owner/reservations" element={<Reservations />} />
-              <Route path="/owner/califications" element={<Califications />} />
-              <Route path="/owner/settings" element={<Settings />} /> */}
+              <Route path="/owner/reportes" element={<Reportes />} />
+              <Route path="/owner/calificaciones" element={<CalificacionesPage />} />
+              <Route path="/owner/reservaciones" element={<ReservasPage />} />
               Aquí irían las demás rutas de dueño
             </Route>
           </Route>
@@ -86,11 +95,12 @@ function App() {
           {/* Rutas de Artista */}
           <Route element={<ArtistRoutes />}>
             <Route element={<ArtistLayout />}>
-              {/* <Route path="/artist" element={<ArtistDashboard />} />
-              <Route path="/artist/artworks" element={<Artworks />} />
-              <Route path="/artist/artworks/create" element={<CreateArtwork />} /> */}
-              {/* Aquí irían las demás rutas de artista */}
-            </Route>
+               <Route path="/artista" element={<ArtistaHomePage />} />
+               <Route path="/artista/mis-reservas" element={<ReservasArtistaPage />} />
+               <Route path="/artista/opiniones" element={<OpinionsToArtistaPage />} />
+               <Route path="/artista/buscar" element={<SearchSalasPage />} />
+
+             </Route>
           </Route>
 
 

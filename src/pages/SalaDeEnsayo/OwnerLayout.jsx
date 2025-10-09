@@ -12,7 +12,7 @@ const OwnerLayout = () => {
           >
             <SideBarOwner />
           </aside>
-          <main className="flex-grow-1 p-4">
+          <main className="flex-grow-1 p-4 bg-light min-vh-100">
             <Outlet />
           </main>
         </div>

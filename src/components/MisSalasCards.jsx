@@ -22,7 +22,7 @@ const MisSalasCards = ({ salas }) => {
           <div key={index} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
             <div className="d-flex justify-content-center gap-3">
               {grupo.map((sala, subIndex) => (
-                <div key={subIndex} className="card" style={{ width: '18rem' }}
+                <div key={subIndex} className="card shadow-lg" style={{ width: '18rem' }}
                   onClick={()=> navigate("/owner/sala-ensayo/"+sala.id)}>
                   <img
                     src={sala.imagenes[0]?.url}

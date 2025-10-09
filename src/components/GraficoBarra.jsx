@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 
-const GraficoReporte = ({ reporte}) => {
+const GraficoReporte = ({ reporte, titulo}) => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null); // Almacenar la instancia de Chart.js
 
@@ -20,7 +20,7 @@ const GraficoReporte = ({ reporte}) => {
         ...reporte,
         datasets: reporte.datasets.map(dataset => ({
           ...dataset,
-          //label: reporte.label,
+          label: titulo,
           backgroundColor: 'rgba(255, 187, 29)',
           //borderColor: 'rgb(255, 187, 29)',
         })),

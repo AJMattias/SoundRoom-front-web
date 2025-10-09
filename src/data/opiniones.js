@@ -1,0 +1,76 @@
+export const opiniones = [
+  {
+    "id": "507f1f77bcf86cd799439011",
+    "descripcion": "Excelente experiencia con el artista, muy profesional y talentoso",
+    "estrellas": 5,
+    "idUser": "64d5f8a1b4d5e3a2c8f7b123",
+    "idRoom": {
+      "id": "60d5f8a1b4d5e3a2c8f7b456",
+      "nameSalaEnsayo": "Sala Harmony",
+      "calleDireccion": "Av. Corrientes",
+      "precioHora": 2500,
+      "numeroDireccion": "1234",
+      "imagenes": ["sala1.jpg", "sala2.jpg"],
+      "idOwner": "64d5f8a1b4d5e3a2c8f7b100",
+      "duracionTurno": 60,
+      "createdAt": "2024-01-10T08:00:00.000Z",
+      "idLocality": "locality_123",
+      "idType": "type_standard",
+      "deletedAt": null,
+      "enabled": "habilitado",
+      "descripcion": "Sala de ensayo profesional con equipamiento de alta calidad",
+      "comodidades": ["amplificadores", "batería", "piano", "aire_acondicionado"],
+    },
+    "idArtist": "62d5f8a1b4d5e3a2c8f7b789"
+  },
+  {
+    "id": "507f1f77bcf86cd799439012",
+    "descripcion": "Buena atención pero el servicio podría mejorar en puntualidad",
+    "estrellas": 4,
+    "idUser": "64d5f8a1b4d5e3a2c8f7b124",
+    "idRoom": {
+      "id": "60d5f8a1b4d5e3a2c8f7b457",
+      "nameSalaEnsayo": "Studio Beat",
+      "calleDireccion": "Calle Florida",
+      "precioHora": 1800,
+      "numeroDireccion": "567",
+      "imagenes": ["studio1.jpg", "studio2.jpg", "studio3.jpg"],
+      "idOwner": "64d5f8a1b4d5e3a2c8f7b101",
+      "duracionTurno": 120,
+      "createdAt": "2024-01-12T10:30:00.000Z",
+      "idLocality": "locality_456",
+      "idType": "type_premium",
+      "deletedAt": null,
+      "enabled": "habilitado",
+      "descripcion": "Estudio de grabación y ensayo con equipamiento profesional",
+      "comodidades": ["estudio_grabacion", "mezcladora", "microfonos", "monitores"],
+
+    },
+    "idArtist": "62d5f8a1b4d5e3a2c8f7b790"
+  },
+  {
+    "id": "507f1f77bcf86cd799439013",
+    "descripcion": "Increíble talento, superó todas mis expectativas",
+    "estrellas": 5,
+    "idUser": "64d5f8a1b4d5e3a2c8f7b125",
+    "idRoom": {
+      "id": "60d5f8a1b4d5e3a2c8f7b458",
+      "nameSalaEnsayo": "Music Lab",
+      "calleDireccion": "Av. Santa Fe",
+      "precioHora": 3200,
+      "numeroDireccion": "890",
+      "imagenes": ["lab1.jpg"],
+      "idOwner": "64d5f8a1b4d5e3a2c8f7b102",
+      "duracionTurno": 90,
+      "createdAt": "2024-01-14T14:15:00.000Z",
+      "idLocality": "locality_789",
+      "idType": "type_vip",
+      "deletedAt": null,
+      "enabled": "habilitado",
+      "descripcion": "Sala VIP con equipamiento de última generación",
+      "comodidades": ["equipo_profesional", "acustica_optimizada", "cafeteria", "wifi"],
+
+    },
+    "idArtist": "62d5f8a1b4d5e3a2c8f7b791"
+  }
+]

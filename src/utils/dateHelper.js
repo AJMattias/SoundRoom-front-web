@@ -38,14 +38,6 @@ export const convertIsoDates = (obj) => {
 // }
 
 export const formatFecha = (fechaStr) => {
-  // console.log('format fecha date: ', fechaStr, typeof fechaStr)
-  // const [day, month, year] = fechaStr.split('/').map(Number);
-  // const localDate = new Date(year, month - 1, day); // mes base 0
-  // const y = localDate.getFullYear();
-  // const m = String(localDate.getMonth()+1).padStart(2, '0');
-  // const d = String(localDate.getDate()).padStart(2, '0');
-  // console.log('fecha resultante: ', `${y}-${m}-${d}`)
-  // return `${y}-${m}-${d}`;
   console.log('format fecha date: ', fechaStr, typeof fechaStr);
   let day, month, year;
 
@@ -65,6 +57,30 @@ export const formatFecha = (fechaStr) => {
   const m = String(localDate.getMonth() + 1).padStart(2, '0');
   const d = String(localDate.getDate()).padStart(2, '0');
   const resultado = `${y}-${m}-${d}`;
+  console.log('fecha resultante: ', resultado);
+  return resultado;
+};
+
+export const formatFechaAr = (fechaStr) => {
+  console.log('format fecha date: ', fechaStr, typeof fechaStr);
+  let day, month, year;
+
+  if (fechaStr.includes('/')) {
+    // Formato tipo 'DD/MM/YYYY'
+    [day, month, year] = fechaStr.split('/').map(Number);
+  } else if (fechaStr.includes('-')) {
+    // Formato tipo 'YYYY-MM-DD'
+    [year, month, day] = fechaStr.split('-').map(Number);
+  } else {
+    console.warn('Formato de fecha desconocido:', fechaStr);
+    return 'Invalid date';
+  }
+
+  const localDate = new Date(year, month - 1, day); // mes base 0
+  const y = localDate.getFullYear();
+  const m = String(localDate.getMonth() + 1).padStart(2, '0');
+  const d = String(localDate.getDate()).padStart(2, '0');
+  const resultado = `${d}-${m}-${y}`;
   console.log('fecha resultante: ', resultado);
   return resultado;
 };
@@ -99,4 +115,13 @@ export function formatDate(fecha) {
   }
 
 
+}
+
+export function formatFecha2(fecha) {
+  const date = new Date(fecha);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const fechaResult =  `${year}-${month}-${day}`
+  return fechaResult;
 }

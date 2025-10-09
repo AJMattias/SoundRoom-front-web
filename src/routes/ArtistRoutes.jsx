@@ -4,21 +4,32 @@ import { useContext } from "react";
 
 const ArtistRoutes = () => {
   
-    const { authState, getUser } = useContext(AuthContext);
+  const { authState } = useContext(AuthContext);
 
-  const loggedUser = getUser();
-  console.log('ArtistRoutes.jsx - isArtist: ', loggedUser);
+  const perfilName = authState.user?.user?.idPerfil?.name?.trim().toLowerCase();
+  const isOwner = perfilName === "artista";
+
+  console.log("autenticado:", authState.isAuthenticated);
+  console.log("perfilName:", perfilName);
+  console.log("isOwner:", isOwner);
+
+  // Mientras se carga el authState
+  if (!authState.user) {
+    return <div>Cargando...</div>;
+  }
+
+  // Si no está autenticado → redirigir a login
   if (!authState.isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  if (!loggedUser?.user?.isArtist) {
-    return <Navigate to="/" replace />;
-  }
-  if (loggedUser?.user?.isArtist) {
-    console.log(loggedUser.user.isArtist);
-    return <Outlet />;
+    return <Navigate to="/login" />;
   }
 
-}
+  // Si está autenticado pero no es owner → redirigir a otra ruta (ej. home)
+  if (!isOwner) {
+    return <Navigate to="/" />;
+  }
+
+  // Si está autenticado y es owner → renderizar rutas protegidas
+  return <Outlet />;
+};
 
 export default ArtistRoutes

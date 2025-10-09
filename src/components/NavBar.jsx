@@ -23,54 +23,54 @@ const NavBar = ({title}) => {
       <img src={logo} alt="logo" style={ {width: "40px", height: "40px"}} />
       <p className="fs-3 text fw-semibold">Sound Room</p></Link>
       {title && <h3 className="text-white ms-3">{title}</h3>}
-    <ul className="d-flex list-unstyled gap-2 mt-3 ms-auto">
-      {authState.isAuthenticated && authState.user ? (
-         <>
-         {/* agregar imagen/icono user */}
-         <li className="text-white fw-bold align-content-center">
-           <div style={{height: "3rem"}} className="border border-white rounded-3 align-items-center gap-1 px-3"
-              >
-              <div> 
-                <i className="bi bi-person"></i> {authState.user.user.name} {authState.user.user.last_name}
+      <ul className="d-flex list-unstyled gap-2 mt-3 ms-auto">
+        {authState.isAuthenticated && authState.user ? (
+          <>
+          {/* agregar imagen/icono user */}
+          <li className="text-white fw-bold align-content-center">
+            <div style={{height: "3rem"}} className="border border-white rounded-3 align-items-center gap-1 px-3"
+                >
+                <div> 
+                  <i className="bi bi-person"></i> {authState.user.user.name} {authState.user.user.last_name}
+                </div>
+                <div>
+                  {authState.user.user.isAdmin ? <p>Administrador</p> : <p>{authState.user.user.idPerfil.name}</p>}
+                  
+                </div>
               </div>
-              <div>
-                {authState.user.user.isAdmin ? <p>Administrador</p> : <p>{authState.user.user.idPerfil.name}</p>}
-                
-              </div>
-            </div>
-         </li>
-         <li className="align-content-center">
-             <Link to="/" 
-             onClick={()=>{logout()}}
-             className="bg-white text-warning text-decoration-none px-3 py-1 rounded "
-             >Logout</Link>
-         </li>
-         </>
-      ) : (
-        <>
-        <li>
-            <Link to="/" 
-            className="text-white text-decoration-none px-3"
-            >Encuentra una sala</Link>
-        </li>
-        <li>
-            <Link to="/" 
-            className="text-white text-decoration-none px-3"
-            >Alquila tu sala</Link>
-        </li>
-        <li>
-            <Link to="/login" 
-            className="bg-white text-warning text-decoration-none px-3 py-1 rounded "
-            >Login</Link>
-        </li>
-        <li>
-            <Link to="/register" 
-            className="bg-white text-warning text-decoration-none px-3 py-1 rounded "
-            >Registrarse</Link>
-        </li>
-        </>
-      )}
-    </ul>
+          </li>
+          <li className="align-content-center">
+              <Link to="/" 
+              onClick={()=>{logout()}}
+              className="bg-white text-warning text-decoration-none px-3 py-1 rounded "
+              >Logout</Link>
+          </li>
+          </>
+        ) : (
+          <>
+          <li>
+              <Link to="/" 
+              className="text-white text-decoration-none px-3"
+              >Encuentra una sala</Link>
+          </li>
+          <li>
+              <Link to="/" 
+              className="text-white text-decoration-none px-3"
+              >Alquila tu sala</Link>
+          </li>
+          <li>
+              <Link to="/login" 
+              className="bg-white text-warning text-decoration-none px-3 py-1 rounded "
+              >Login</Link>
+          </li>
+          <li>
+              <Link to="/register" 
+              className="bg-white text-warning text-decoration-none px-3 py-1 rounded "
+              >Registrarse</Link>
+          </li>
+          </>
+        )}
+      </ul>
 
 </nav>  )
 }

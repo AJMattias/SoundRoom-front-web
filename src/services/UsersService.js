@@ -246,13 +246,13 @@ import { getJwtToken, setJwtToken, setLoggedUser} from "../storage/LocalStorage"
 
 class UserService {
     async login(email, password) {
-        console.log('login')
+        console.log('login: ', email, password)
         const loginResponse = await api.post("auth", {
             email: email,
             password: password,
         });
         console.log('Response login: ', loginResponse)
-        console.log('token: ', loginResponse.token)
+        //console.log('token: ', loginResponse.token)
         if (loginResponse.token) {
             setJwtToken(loginResponse.token);
             setLoggedUser(loginResponse.user);
