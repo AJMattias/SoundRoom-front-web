@@ -2,23 +2,12 @@
 import { useState, useCallback } from "react";
 
 // =========================================================================
-// STUB: LoadingSpinner
-// NOTA: Debes reemplazar este stub con tu importación original
-// import LoadingSpinner from "../../components/LoadingSpinner";
-// =========================================================================
-const LoadingSpinner = () => (
-    <div className="text-center my-4">
-        <div className="spinner-border text-warning" role="status">
-            <span className="visually-hidden">Cargando...</span>
-        </div>
-    </div>
-);
-
-
-// =========================================================================
 // STUB: RoomService
 // NOTA: Debes reemplazar este stub con tu importación original
 import { RoomService } from "../../services/SalaDeEnsayoService";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import CardSalaEnsayoBusqueda from "../../components/CardSalaEnsayoBusqueda "; 
+
 
 
 const SearchSalasPage = () => {
@@ -32,7 +21,7 @@ const SearchSalasPage = () => {
 
     /**
      * Maneja el cambio en la cantidad de elementos por página (Limit).
-     * @param {React.ChangeEvent<HTMLSelectElement>} e Evento de cambio.
+    //  * @param {React.ChangeEvent<HTMLSelectElement>} e Evento de cambio.
      */
     const handleLimitChange = (e) => {
         const newLimit = parseInt(e.target.value, 10);
@@ -138,43 +127,39 @@ const SearchSalasPage = () => {
                         </div>
                     </div>
                     
-                    <hr className="mt-4"/>
+                    <hr className="col-11 mt-4"/>
                     
                     {/* Sección de Resultados */}
-                    <div className="col-md-10 mt-3">
+                    <div className="col-md-12 mt-3">
                         {/* Mantenemos el stub de LoadingSpinner, pero debe ser reemplazado */}
                         {loading && <LoadingSpinner />}
                         
+                        
+                        
+                        {/* Condicional de la lista de salas: USANDO ?.length */}
+                         {!loading && salasData.data?.length > 0 ? (
+                            <div className="row">
+                                {(salasData.data || []).map((sala) => (
+                                    <div key={sala.id} className="col-md-4 mb-4">
+                                        {/* 🔴 CAMBIO 6: Usando el nuevo componente Card */}
+                                        <CardSalaEnsayoBusqueda 
+                                            sala={sala}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        ) : !loading && name.trim() !== '' && (
+                            <div className="alert alert-info text-center mt-3">
+                                No se encontraron salas de ensayo con el término: <strong>{name}</strong>
+                            </div>
+                        )}
                         {/* Condicional de mensajes y resultados: USANDO ?.length */}
                         {!loading && salasData.data?.length > 0 && (
                             <p className="text-muted text-center">
-                                Resultados encontrados: **{salasData.total}**. 
-                                Estás en la página **{salasData.page}** de **{totalPages}**.
+                                Resultados encontrados: <strong>{salasData.total}</strong>  - 
+                                Estás en la página <strong>{salasData.page} de {totalPages} </strong>
                             </p>
                         )}
-                        
-                        {/* Condicional de la lista de salas: USANDO ?.length */}
-                        {!loading && salasData.data?.length > 0 ? (
-                            <ul className="list-group">
-                                {/* Iteración sobre el array de datos (con un fallback seguro) */}
-                                {(salasData.data || []).map((sala) => (
-                                    <li key={sala.id} className="list-group-item d-flex justify-content-between align-items-center rounded-3 mb-2 shadow-sm border border-secondary">
-                                        <div>
-                                            <h5 className="mb-1 text-primary">{sala.nameSalaEnsayo}</h5>
-                                            <p className="mb-1 text-muted"><i className="bi bi-geo-alt-fill"></i> {sala.calleDireccion}</p>
-                                        </div>
-                                        <span className="badge bg-warning text-dark p-2 fs-6 fw-bold">
-                                            ${sala.precioHora} / hora
-                                        </span>
-                                    </li> 
-                                ))}
-                            </ul>
-                        ) : !loading && name.trim() !== '' && (
-                            <div className="alert alert-info text-center mt-3">
-                                No se encontraron salas de ensayo con el término: **{name}**
-                            </div>
-                        )}
-                        
                         {/* Controles de Paginación */}
                         {totalPages > 1 && !loading &&(
                             <nav aria-label="Navegacion de paginas" className="mt-4">
