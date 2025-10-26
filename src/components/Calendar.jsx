@@ -8,7 +8,7 @@ const Calendar = ({ onChange, value, isInicio }) => { // Correcta desestructurac
       <ReactCalendar 
         onChange={(date) => onChange(date, isInicio)} // Pasando la función correctamente
         value={value} 
-        maxDate={new Date()} // Puedes ajustar maxDate según tus necesidades
+        maxDate={new Date()}// Puedes ajustar maxDate según tus necesidades
       />
     </div>
   );

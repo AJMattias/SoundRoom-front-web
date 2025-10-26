@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import './styles/index.css';
-import { BrowserRouter, Route, Router, Routes } from 'react-router-dom'
-import { AuthProvider } from './contexts/AuthProvider'
+import { BrowserRouter, Route, Router, Routes, useNavigate } from 'react-router-dom'
+// import { AuthProvider } from './contexts/AuthProvider'
 import Login from './pages/Auth/Login'
 import Register from './pages/Auth/Register'
 import Home from './pages/Home'
@@ -39,74 +39,74 @@ import ReservasArtistaPage from './pages/Artista/ReservasArtistaPage'
 import OpinionsToArtista from './pages/Artista/OpinionsToArtistaPage';
 import OpinionsToArtistaPage from './pages/Artista/OpinionsToArtistaPage';
 import SearchSalasPage from './pages/Artista/SearchSalasPage';
+import VerSalaPage from './pages/Artista/VerSalaPage';
+import ReservarPage from './pages/Artista/ReservarPage';
+
 
 function App() {
   
-
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path="/login" element={< Login/>}></Route>
-          <Route path="/register" element={< Register/>}></Route>
-          <Route path="/home" element={< Home/>}></Route>
-          <Route path="/forgotPassword" element={< ForgotPasswordScreen/>}></Route>
-          {/* <Route path="/changePassword" element={< ChangePasswordScreen/>}></Route> */}
-          <Route path="/forgotPassword/reset-password/:token" element={< ChangePasswordScreen />}></Route>
-          <Route element={<AdminRoutes />}>
-            <Route element={<AdminLayout />}>
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/admin/profiles" element={<Profiles />} />
-              <Route path="/admin/permissions" element={<Permissions />} />
-              <Route path="/admin/permissions/create" element={<CreatePermiso />} />
-              <Route path="/admin/permissions/permissions" element={<VerPermisos />} />
-              <Route path="/admin/permissions/updatePermission" element={<CreatePermiso />} />
-              <Route path="/admin/profiles/create" element={<CreateProfile />} />
-              <Route path="/admin/profiles/profiles" element={<VerProfiles />} />
-              <Route path="/admin/profiles/updateProfile" element={<CreateProfile />} />
-              <Route path="/admin/reports" element={<Reports />} />
-              <Route path="/admin/backup" element={<BackUp />} />
-              <Route path="/admin/comission" element={<Comisisons />} />
-              <Route path="/admin/comission/create" element={<CreateComission />} />
-              <Route path="/admin/comission/comissions" element={<VerComissions />} />
-              <Route path="/admin/comission/history" element={<ComissionHistory />} />
-              <Route path="/admin/users" element={<AdminUsers />} />
-              <Route path="/admin/profiles/profile-permissions" element={<PerfilPermisos />}></Route>
-            </Route>
-          </Route>
+  <BrowserRouter>
+    <Routes>
+      <Route path='/' element={<Home />} />
+      <Route path="/login" element={< Login/>}></Route>
+      <Route path="/register" element={< Register/>}></Route>
+      <Route path="/home" element={< Home/>}></Route>
+      <Route path="/forgotPassword" element={< ForgotPasswordScreen/>}></Route>
+      {/* <Route path="/changePassword" element={< ChangePasswordScreen/>}></Route> */}
+      <Route path="/forgotPassword/reset-password/:token" element={< ChangePasswordScreen />}></Route>
+      <Route element={<AdminRoutes />}>
+        <Route element={<AdminLayout />}>
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/profiles" element={<Profiles />} />
+          <Route path="/admin/permissions" element={<Permissions />} />
+          <Route path="/admin/permissions/create" element={<CreatePermiso />} />
+          <Route path="/admin/permissions/permissions" element={<VerPermisos />} />
+          <Route path="/admin/permissions/updatePermission" element={<CreatePermiso />} />
+          <Route path="/admin/profiles/create" element={<CreateProfile />} />
+          <Route path="/admin/profiles/profiles" element={<VerProfiles />} />
+          <Route path="/admin/profiles/updateProfile" element={<CreateProfile />} />
+          <Route path="/admin/reports" element={<Reports />} />
+          <Route path="/admin/backup" element={<BackUp />} />
+          <Route path="/admin/comission" element={<Comisisons />} />
+          <Route path="/admin/comission/create" element={<CreateComission />} />
+          <Route path="/admin/comission/comissions" element={<VerComissions />} />
+          <Route path="/admin/comission/history" element={<ComissionHistory />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/profiles/profile-permissions" element={<PerfilPermisos />}></Route>
+        </Route>
+      </Route>
 
-           {/* Rutas de Dueño */}
-          <Route element={<OwnerRoutes />}>
-            <Route element={<OwnerLayout />}>
-              <Route path="/owner" element={<HomeOwnerPage />} />
-              <Route path="/owner/create-room" element={<CreateSalaPage />} />
-              <Route path="/owner/sala-ensayo/:id" element={<SalaPage />} />
-              <Route path="/owner/home" element={<HomeOwnerPage />} />
-              <Route path="/owner/mis-salas" element={<HomeOwnerPage />} />
-              <Route path="/owner/edit-room/:id" element={<CreateSalaPage />} />
-              <Route path="/owner/reportes" element={<Reportes />} />
-              <Route path="/owner/calificaciones" element={<CalificacionesPage />} />
-              <Route path="/owner/reservaciones" element={<ReservasPage />} />
-              Aquí irían las demás rutas de dueño
-            </Route>
-          </Route>
-          
-          {/* Rutas de Artista */}
-          <Route element={<ArtistRoutes />}>
-            <Route element={<ArtistLayout />}>
-               <Route path="/artista" element={<ArtistaHomePage />} />
-               <Route path="/artista/mis-reservas" element={<ReservasArtistaPage />} />
-               <Route path="/artista/opiniones" element={<OpinionsToArtistaPage />} />
-               <Route path="/artista/buscar" element={<SearchSalasPage />} />
+        {/* Rutas de Dueño */}
+      <Route element={<OwnerRoutes />}>
+        <Route element={<OwnerLayout />}>
+          <Route path="/owner" element={<HomeOwnerPage />} />
+          <Route path="/owner/create-room" element={<CreateSalaPage />} />
+          <Route path="/owner/sala-ensayo/:id" element={<SalaPage />} />
+          <Route path="/owner/home" element={<HomeOwnerPage />} />
+          <Route path="/owner/mis-salas" element={<HomeOwnerPage />} />
+          <Route path="/owner/edit-room/:id" element={<CreateSalaPage />} />
+          <Route path="/owner/reportes" element={<Reportes />} />
+          <Route path="/owner/calificaciones" element={<CalificacionesPage />} />
+          <Route path="/owner/reservaciones" element={<ReservasPage />} />
+          Aquí irían las demás rutas de dueño
+        </Route>
+      </Route>
+      
+      {/* Rutas de Artista */}
+      <Route element={<ArtistRoutes />}>
+        <Route element={<ArtistLayout />}>
+            <Route path="/artista" element={<ArtistaHomePage />} />
+            <Route path="/artista/mis-reservas" element={<ReservasArtistaPage />} />
+            <Route path="/artista/opiniones" element={<OpinionsToArtistaPage />} />
+            <Route path="/artista/buscar" element={<SearchSalasPage />} />
+          <Route path="/artista/ver-sala/:id" element={<VerSalaPage />} />
+          <Route path="/artista/reservar/:id" element={<ReservarPage />} />
 
-             </Route>
-          </Route>
-
-
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+        </Route>
+      </Route>
+    </Routes>
+  </BrowserRouter>
   )
 }
 

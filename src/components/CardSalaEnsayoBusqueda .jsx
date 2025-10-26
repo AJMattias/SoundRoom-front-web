@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,7 +7,7 @@ const CardSalaEnsayoBusqueda =({sala}) =>{
     const navigate = useNavigate()
 
     const handleCardClick = (id) => {
-        navigate(`/sala/${id}`);
+        navigate(`/artista/ver-sala/${id}`);
       }
 
     console.log('sala card: ', sala)
@@ -16,8 +15,8 @@ const CardSalaEnsayoBusqueda =({sala}) =>{
       return (
         <div 
         className="card shadow pt-3 mx-2 h-100"
-        onClick={() => console.log(`Sala seleccionada: ${sala.id}`)}
-        //onClick={handleCardClick(sala.id)} 
+        //onClick={() => console.log(`Sala seleccionada: ${sala.id}`)}
+        onClick={()=>handleCardClick(sala.id)} 
         style={{cursor: 'pointer' }}
         >
             {/* Imagen de la sala - puedes usar una imagen por defecto o de la API */}
@@ -36,7 +35,7 @@ const CardSalaEnsayoBusqueda =({sala}) =>{
                     {/* Calificación - puedes agregar este campo a tu API si no existe */}
                     <div className="d-flex align-items-center">
                         <i className="bi bi-star-fill text-warning me-1"></i>
-                        <span className="fw-bold">{sala.calificacion || "4.5"}</span>
+                        c
                     </div>
                 </div>
                 

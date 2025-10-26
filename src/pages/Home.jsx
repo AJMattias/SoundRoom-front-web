@@ -1,8 +1,28 @@
 import NavBar from "../components/NavBar"
 import homeImage from "../assets/home_imagee.jpg"
 import card1 from "../assets/card1.jpg"
+import { useContext, useEffect } from "react";
+import { AuthContext } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+
+  const { authState } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (authState.isAuthenticated && authState.user) {
+      // Redirigir según tipo de usuario
+      if (authState.user.user.isAdmin) {
+        navigate("/admin/home", { replace: true });
+      } else if (authState.user.user.idPerfil.name === "Artista") {
+        navigate("/artista", { replace: true });
+      } else {
+        navigate("/owner", { replace: true });
+      }
+    }
+  }, [authState, navigate]);
+
   return (
    <div>
       <NavBar className="mb-5"/>
