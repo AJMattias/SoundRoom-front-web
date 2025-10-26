@@ -6,9 +6,10 @@ import { useNavigate, useParams } from "react-router-dom"
 import LoadingSpinner from "../../components/LoadingSpinner"
 import PromedioEstrellas from "../../components/PromedioEstrellas"
 import Calendar from "../../components/Calendar"
-import { MdOutlineKeyboardArrowDown } from "react-icons/md";
+import { MdAttachMoney, MdOutlineKeyboardArrowDown } from "react-icons/md";
 import ReactCalendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import { SlCalender, SlClock } from "react-icons/sl"
 
 
 const ReservarPage =() => {
@@ -52,6 +53,8 @@ const ReservarPage =() => {
     const [stepHorario, setStepHorario] = useState(0)
 
     const [horarios, setHorarios] = useState(horariosIniciales)
+
+    const [precio, setPrecio] = useState(0)
 
     const status= 'active'
 
@@ -97,7 +100,18 @@ const ReservarPage =() => {
                 // Segundo click - seleccionar fin
                 const horaInicio = rangoHorario.inicio;
                 const horaFin = nuevosHorarios[index].hora;
-                
+                const hsInicio = parseInt(horaInicio.split(':')[0], 10);
+                const hsFin = parseInt(horaFin.split(':')[0], 10);
+                if(hsFin === hsInicio){
+                    // Si el usuario selecciona la misma hora, no hacer nada
+                    setError('El rango de horas no puede ser el mismo. Por favor, selecciona un rango válido.');
+                    return nuevosHorarios;
+                }
+                if(hsFin < hsInicio){
+                    // Si el usuario selecciona una hora anterior al inicio, mostrar error
+                    setError('La hora de fin no puede ser anterior a la hora de inicio. Por favor, selecciona un rango válido.');
+                    return nuevosHorarios;
+                }
                 const inicioIndex = nuevosHorarios.findIndex(h => h.hora === horaInicio);
                 const finIndex = index;
                 
@@ -109,6 +123,7 @@ const ReservarPage =() => {
                 
                 setRangoHorario({ inicio: horaInicio, fin: horaFin });
                 setStepHorario(0);
+                setPrecio((finIndex - inicioIndex) * sala.precioHora);
                 
                 return horariosActualizados;
             }
@@ -199,10 +214,10 @@ const ReservarPage =() => {
                 )}
                 {error && (
                     <div className="align-content-around">
-                        <Alerta tipo="error" mensaje={error} />
+                        <Alerta tipo="error" mensaje={error} onClose={()=> setError('')}/>
                     </div>
                 )}
-                {!loading && !error && sala && (
+                {!loading  && sala && (
                     <div
                     className=" mx-3 mt-1 pt-1 align-content-start"
                     >
@@ -230,17 +245,21 @@ const ReservarPage =() => {
                 )}
             </div>
 
-            <div className="mx-3 mt-1 pt-1 px-3 align-content-center">
-                <h5>Reservando:</h5>
-                <p className="fw-semibold">Dia: {fecha}</p>
-                <p className="fw-semibold">Rango de reserva: {rangoHorario.inicio} a {rangoHorario.fin}</p>
+            {rangoHorario.inicio && rangoHorario.fin && fecha && (
+                <div>
+                    <div className="mx-3 mt-1 pt-1 px-3 align-content-center">
+                    <h5>Reservando:</h5>
+                    <p className="fw-semibold"> <SlCalender /> Dia: {fecha}</p>
+                    <p className="fw-semibold"> <SlClock /> Rango de reserva: {rangoHorario.inicio} a {rangoHorario.fin}</p>
+                    <p className="fw-semibold"> <MdAttachMoney /> Precio de la reserva: ${precio}</p>
+                </div>
 
-            </div>
-
-            <div className="flex- d-flex row">
-                <div className="col-1"></div>
-                <hr className="col-10"/>
-            </div>
+                <div className="flex- d-flex row">
+                    <div className="col-1"></div>
+                    <hr className="col-10"/>
+                </div>
+                </div>
+            )}
         
             {pasoActual === 'elegir dia' && (
                 <div className=" mx-3 mt-1 pt-1 px-3 align-content-center">
