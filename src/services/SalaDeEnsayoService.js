@@ -13,7 +13,7 @@ import { formatFecha2 } from "../utils/dateHelper.js";
 class SalaDeEnsayoService {
   async getRoomBd(roomId) {
     const room = await api.get("/salasdeensayo/findOne/?id=" + roomId);
-    console.log(room);
+    console.log('getRoomBd service romm:', room);
     return room;
   }
 

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 
 const CarruselImagenes = ({images}) => {
+    console.log('carrusel imagenes: ', images)
     const imagenes =images || []
     return (
     <div className="container">

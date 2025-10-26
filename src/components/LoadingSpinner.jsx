@@ -2,7 +2,7 @@
 
 const LoadingSpinner = ({ 
   size = 'md', 
-  color = 'primary', 
+  color = 'warning', 
   text = 'Cargando...',
   centered = false 
 }) => {
@@ -19,7 +19,7 @@ const LoadingSpinner = ({
 
   if (centered) {
     return (
-      <div className="d-flex justify-content-center align-items-center">
+      <div className="d-flex justify-content-between align-items-center">
         {spinnerContent}
       </div>
     );
