@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect} from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import Alerta from "../../components/Alerta"
 import {RoomService} from "../../services/SalaDeEnsayoService"
 import { useNavigate, useParams } from "react-router-dom"
@@ -105,6 +105,7 @@ const ReservarPage =() => {
                 if(hsFin === hsInicio){
                     // Si el usuario selecciona la misma hora, no hacer nada
                     setError('El rango de horas no puede ser el mismo. Por favor, selecciona un rango válido.');
+                    console.log('El rango de horas no puede ser el mismo. Por favor, selecciona un rango válido.');
                     return nuevosHorarios;
                 }
                 if(hsFin < hsInicio){
@@ -151,7 +152,7 @@ const ReservarPage =() => {
         setFecha(string)
     }
 
-    const getSalaData = async()  => {
+    const getSalaData = useCallback(async()  => {
        try {
             setLoading(true)
             setError('')
@@ -189,7 +190,7 @@ const ReservarPage =() => {
         } finally {
             setLoading(false)
         }
-    }
+    }, [id])
 
     useEffect(() => {
        if (!id) {
@@ -199,11 +200,23 @@ const ReservarPage =() => {
         }
         
         getSalaData()
-    }, [])
+    }, [getSalaData])
+
+    useEffect(() => {
+        if (error) {
+            const timer = setTimeout(() => {
+                setError(''); // Limpia el error después de 5 segundos
+            }, 5000); 
+
+            // Función de limpieza para evitar fugas de memoria si el componente se desmonta 
+            // o si 'error' cambia antes de que se ejecute el timeout
+            return () => clearTimeout(timer);
+        }
+    }, [error]);
 
     return (
         <div className="mx-auto flex flex-col col-10 bg-white rounded-3 items-center justify-center min-h-screen">
-            {error && <Alerta tipo="error" mensaje={error} />}
+            {/* {error && <Alerta tipo="error" mensaje={error} />} */}
             <div className=" rounded-3 w-100 mx-2 mt-3 pt-3">
                 {/* header sala */}
                 {loading && (
@@ -217,6 +230,7 @@ const ReservarPage =() => {
                         <Alerta tipo="error" mensaje={error} onClose={()=> setError('')}/>
                     </div>
                 )}
+
                 {!loading  && sala && (
                     <div
                     className=" mx-3 mt-1 pt-1 align-content-start"

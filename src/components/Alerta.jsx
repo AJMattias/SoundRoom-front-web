@@ -1,5 +1,10 @@
+
 /* eslint-disable react/prop-types */
 const Alerta = ({ mensaje, onClose }) => {
+
+
+  console.log('muestra alerta');
+  
   return (
     <div className="alert alert-danger d-flex align-items-center justify-content-between" role="alert">
       <span>{mensaje}</span>
