@@ -41,6 +41,7 @@ import OpinionsToArtistaPage from './pages/Artista/OpinionsToArtistaPage';
 import SearchSalasPage from './pages/Artista/SearchSalasPage';
 import VerSalaPage from './pages/Artista/VerSalaPage';
 import ReservarPage from './pages/Artista/ReservarPage';
+import ConfirmacionReservaPaga from './pages/Artista/ConfirmacionReservaPaga';
 
 
 function App() {
@@ -100,9 +101,11 @@ function App() {
             <Route path="/artista/mis-reservas" element={<ReservasArtistaPage />} />
             <Route path="/artista/opiniones" element={<OpinionsToArtistaPage />} />
             <Route path="/artista/buscar" element={<SearchSalasPage />} />
-          <Route path="/artista/ver-sala/:id" element={<VerSalaPage />} />
-          <Route path="/artista/reservar/:id" element={<ReservarPage />} />
-
+            <Route path="/artista/ver-sala/:id" element={<VerSalaPage />} />
+            <Route path="/artista/reservar/:id" element={<ReservarPage />} />
+            <Route path="/reservas/pago-exitoso/:idSala/:idReserva" element={<ConfirmacionReservaPaga />} />
+            <Route path="/reservas/pago-fallido/" element={<ReservasArtistaPage />} />
+            <Route path="/reservas/pago-pendiente/" element={<ReservasArtistaPage />} />
         </Route>
       </Route>
     </Routes>
