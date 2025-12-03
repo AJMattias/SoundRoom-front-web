@@ -6,10 +6,13 @@ import { useNavigate, useParams } from "react-router-dom"
 import LoadingSpinner from "../../components/LoadingSpinner"
 import PromedioEstrellas from "../../components/PromedioEstrellas"
 import Calendar from "../../components/Calendar"
-import { MdAttachMoney, MdOutlineKeyboardArrowDown } from "react-icons/md";
+import { MdAttachMoney, MdOutlineKeyboardArrowDown, MdRoomPreferences } from "react-icons/md";
 import ReactCalendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { SlCalender, SlClock } from "react-icons/sl"
+import { ReservasService } from "../../services/ReservasServices"
+
+
 
 
 const ReservarPage =() => {
@@ -18,6 +21,8 @@ const ReservarPage =() => {
     const [sala, setSala] = useState(null)
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(true)
+    const [urlMP, setUrlMP] = useState('https://sandbox.mercadopago.com/checkout/init?pref_id=')
+    const [preferenceId, setPreferenceId] = useState(null)
 
     const horariosIniciales = [
         { hora: '00:00', disabled: false, selected: false },
@@ -60,27 +65,6 @@ const ReservarPage =() => {
 
     const handleHorarioChange = (index) => {
 
-        // //guardar el horario seleccionado en rango horario
-        // console.log('Horario seleccionado: ', horarios[index], horarios[index].hora)
-        // if (stepHorario === 0) {
-        //     setRangoHorario({ ...rangoHorario, inicio: horarios[index].hora, fin: '-' })
-        //     horarios[index].enabled = 'disabled'
-        //     console.log('horarios[index] inicio: ', horarios[index])
-        //     setStepHorario(1)
-        // } else if (stepHorario !== 0) {
-        //     setRangoHorario({ ...rangoHorario, fin: horarios[index].hora })
-        //     horarios[index].enabled = 'disabled'
-        //     console.log('horarios[index] fin: ', horarios[index])
-        //     setStepHorario(0)
-        // }
-
-        // //cambiar el estado de enabled
-        // const updatedHorarios = horarios.map((hora, i) => {
-        //     if (i === index) {
-        //         return { ...hora, enabled: hora.enabled === 'active' ? 'inactive' : 'active' };
-        //     }
-        // })
-        // Si el horario está deshabilitado, no hacer nada
         if (horarios[index].disabled) return;
 
         setHorarios(prevHorarios => {
@@ -191,6 +175,21 @@ const ReservarPage =() => {
             setLoading(false)
         }
     }, [id])
+
+    const pagar =async () =>{
+        console.log('pagar')
+        console.log('(id,sala.idOwner._id, rangoHorario.inicio, rangoHorario.fin, fecha, precio):', id,sala.idOwner._id, rangoHorario.inicio, rangoHorario.fin, fecha, precio);
+        const response = await ReservasService.pagarReserva(id,sala.idOwner._id, rangoHorario.inicio, rangoHorario.fin, fecha, precio)
+        setPreferenceId(response)
+        console.log('response pagarReserva: ', response)
+       if(response && response.paymentUrl){
+            // SOLUCIÓN: Usar window.location para redirección externa
+            window.location.href = response.paymentUrl;
+            
+            // O si prefieres mantener navigate (pero mejor window.location):
+            // navigate(response.paymentUrl, { replace: true });
+        }
+    }
 
     useEffect(() => {
        if (!id) {
@@ -309,7 +308,7 @@ const ReservarPage =() => {
                 </div>
                 
                
-                 <div className="d-flex flex-wrap justify-content-start gap-2 mt-3 px-1">
+                 <div className="d-flex flex-wrap justify-content-start gap-2 mt-3 px-3">
                     {horarios.map((hora, index) => (
                         <div  
                             key={index}
@@ -339,12 +338,25 @@ const ReservarPage =() => {
                     >
                         Atrás
                     </button>
-                    <button 
-                        className="btn btn-warning"
-                        onClick={() => irAPaso('pago')}
-                    >
-                        Siguiente
-                    </button>
+                   {(!rangoHorario.inicio && !rangoHorario.fin) ? (
+                        // Caso VERDADERO: Mostrar botón 'Siguiente'
+                        <button 
+                            className="btn btn-warning"
+                            onClick={() => irAPaso('pago')}
+                        >
+                            Siguiente
+                        </button>
+                    ) : (
+                        // Caso FALSO: Mostrar botón 'Pagar'
+                        <button 
+                            className="btn btn-warning"
+                            onClick={pagar} 
+                            // Nota: Asegúrate de que 'pagar' sea una función. 
+                            // Si es una función, la sintaxis correcta es onClick={pagar} o onClick={() => pagar()}
+                        >
+                            Pagar
+                        </button>
+                    )}
                 </div>
             </div>
         )}
