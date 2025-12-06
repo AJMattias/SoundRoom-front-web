@@ -1,8 +1,9 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react"
 import { CiLocationOn } from "react-icons/ci"
 import { IoIosCalendar, IoIosTime, IoMdCheckmarkCircleOutline, IoMdMusicalNotes } from "react-icons/io"
 import { MdOutlineAttachMoney } from "react-icons/md"
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams  } from 'react-router-dom';
 import { RoomService } from "../../services/SalaDeEnsayoService";
 import { ReservasService } from "../../services/ReservasServices";
 
@@ -12,38 +13,108 @@ const ConfirmacionReservaPaga = () => {
     const [reserva, setReserva] = useState(null)
     const [reservadate, setReservadate] = useState()
     const [loading, setLoading] = useState(true)
+    const [formattedDate, setFormattedDate] = useState('')
+    const [error, setError] = useState('')
+
 
     //obtener de param el id de reserva y sala
     const { idSala, idReserva } = useParams();
 
-    const getSala = async (idSala) => {
-        const response = await RoomService.getRoomBd(idSala);
-        const data = response;
-        setSala(data);
-        console.log('sala data en confirmacion: ', data)
+    // Obtener query params de la URL (los de Mercado Pago)
+    const [searchParams] = useSearchParams();
+    
+    // Extraer datos importantes de Mercado Pago
+    const collectionStatus = searchParams.get('collection_status'); // 'approved'
+    const paymentId = searchParams.get('payment_id');
+    const merchantOrderId = searchParams.get('merchant_order_id');
+
+    console.log('🔍 Parámetros de Mercado Pago:', {
+        idSala,
+        idReserva,
+        collectionStatus,
+        paymentId,
+        merchantOrderId,
+        allParams: Object.fromEntries(searchParams.entries())
+    });
+
+    const getSala = async (id) => {
+        try {
+            const response = await RoomService.getRoomBd(id);
+            setSala(response);
+            console.log('✅ Sala cargada:', response);
+        } catch (error) {
+            console.error('❌ Error cargando sala:', error);
+            setError('Error al cargar los datos de la sala');
+        }
     }
 
-    const getReserva = async (idSala) => {
-        const response = await ReservasService.getReserva(idSala);
-        const data = response;
-        setReserva(data);
-        setReservadate(data.date.toLocaleDateString('es-AR'));
-        console.log('reserva data en confirmacion: ', data)
-        console.log('fecha reserva: ', reservadate);
+    const getReserva = async (id) => {
+         try {
+            const response = await ReservasService.getReserva(id);
+            setReserva(response);
+            
+            // Formatear fecha correctamente
+            if (response.date) {
+                const date = new Date(response.date);
+                const formatted = date.toLocaleDateString('es-AR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+                setFormattedDate(formatted);
+                console.log('✅ Reserva cargada. Fecha formateada:', formatted);
+            }
+            
+        } catch (error) {
+            console.error('❌ Error cargando reserva:', error);
+            setError('Error al cargar los datos de la reserva');
+        }
     
+    }
+
+     // Verificar estado del pago con el backend
+    const verificarEstadoPago = async () => {
+        try {
+            console.log('🔍 Verificando estado del pago en backend...');
+            // Puedes llamar a un endpoint que verifique el estado del pago
+            // await ReservasService.verificarPago(idReserva, paymentId);
+        } catch (error) {
+            console.error('⚠️ Error verificando pago:', error);
+        }
     }
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
+            setError('');
+            
+            // Validar que vengan los parámetros necesarios
+            if (!idSala || !idReserva) {
+                setError('Faltan parámetros en la URL');
+                setLoading(false);
+                return;
+            }
+
+            // Verificar que el pago fue aprobado
+            if (collectionStatus !== 'approved') {
+                setError(`El pago no fue aprobado. Estado: ${collectionStatus}`);
+                // Podrías redirigir a una página de error
+                // navigate('/reservas/pago-fallido');
+            }
+
             try {
-                // Esperar a que ambas peticiones se completen
+                // Ejecutar en paralelo
                 await Promise.all([
                     getSala(idSala),
                     getReserva(idReserva)
                 ]);
+                
+                // Verificar estado del pago
+                await verificarEstadoPago();
+                
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error('💥 Error general:', error);
+                setError('Ocurrió un error al cargar los datos');
             } finally {
                 setLoading(false);
             }
@@ -57,6 +128,44 @@ const ConfirmacionReservaPaga = () => {
             setLoading(false);
         }
     }, [sala, reserva]);
+
+    // Mostrar errores
+    if (error) {
+        return (
+            <div className="flex flex-col w-100 items-center justify-center min-h-screen">
+                <div className="alert alert-danger" role="alert">
+                    <h4 className="alert-heading">Error</h4>
+                    <p>{error}</p>
+                    <hr />
+                    <p className="mb-0">
+                        Por favor, contacta a soporte si el problema persiste.
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    if (loading) {
+        return (
+            <div className="flex flex-col w-100 items-center justify-center min-h-screen">
+                <div className="spinner-border text-warning" role="status">
+                    <span className="visually-hidden">Cargando...</span>
+                </div>
+                <span className="mt-3">Cargando detalles de la reserva...</span>
+            </div>
+        );
+    }
+
+    // Verificar que tengamos los datos necesarios
+    if (!sala || !reserva) {
+        return (
+            <div className="flex flex-col w-100 items-center justify-center min-h-screen">
+                <div className="alert alert-warning" role="alert">
+                    No se encontraron los datos de la reserva.
+                </div>
+            </div>
+        );
+    }
     
 
   return (
