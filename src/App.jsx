@@ -103,7 +103,7 @@ function App() {
             <Route path="/artista/buscar" element={<SearchSalasPage />} />
             <Route path="/artista/ver-sala/:id" element={<VerSalaPage />} />
             <Route path="/artista/reservar/:id" element={<ReservarPage />} />
-            <Route path="/reservas/pago-exitoso/:idSala/:idReserva" element={<ConfirmacionReservaPaga />} />
+            <Route path="/reservas/pago-exitoso" element={<ConfirmacionReservaPaga />} />
             <Route path="/reservas/pago-fallido/" element={<ReservasArtistaPage />} />
             <Route path="/reservas/pago-pendiente/" element={<ReservasArtistaPage />} />
         </Route>
