@@ -16,12 +16,11 @@ const ConfirmacionReservaPaga = () => {
     const [formattedDate, setFormattedDate] = useState('')
     const [error, setError] = useState('')
 
-
-    //obtener de param el id de reserva y sala
-    const { idSala, idReserva } = useParams();
-
     // Obtener query params de la URL (los de Mercado Pago)
     const [searchParams] = useSearchParams();
+
+    const idSala = searchParams.get('idSala');
+    const idReserva = searchParams.get('idReserva');
     
     // Obtener todos los parámetros de MercadoPago
     const collectionId = searchParams.get('collection_id');
