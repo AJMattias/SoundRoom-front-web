@@ -1,0 +1,2 @@
+# Desde la terminal en la raíz de tu proyecto
+echo '/* /index.html 200' > _redirects
