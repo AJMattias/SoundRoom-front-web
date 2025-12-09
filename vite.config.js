@@ -1,15 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
+// vite.config.js
 export default defineConfig({
   plugins: [react()],
-   build: {
-    outDir: 'dist',
-    sourcemap: true,
-    // Asegura que los assets tengan rutas relativas
-    assetsDir: 'assets'
-  },
-  // Si tienes problemas con las rutas, agrega:
-  base: './',
-})
+  base: '/',  // ← Solo este cambio
+  build: {
+    outDir: 'dist'
+  }
+});
