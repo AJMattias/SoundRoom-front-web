@@ -1,6 +1,5 @@
-{del _redirects
-
-,
+{
+  "version": 2,
   "builds": [
     {
       "src": "package.json",
