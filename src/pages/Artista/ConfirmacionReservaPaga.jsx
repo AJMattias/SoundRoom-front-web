@@ -23,19 +23,26 @@ const ConfirmacionReservaPaga = () => {
     // Obtener query params de la URL (los de Mercado Pago)
     const [searchParams] = useSearchParams();
     
-    // Extraer datos importantes de Mercado Pago
-    const collectionStatus = searchParams.get('collection_status'); // 'approved'
+    // Obtener todos los parámetros de MercadoPago
+    const collectionId = searchParams.get('collection_id');
+    const collectionStatus = searchParams.get('collection_status');
     const paymentId = searchParams.get('payment_id');
+    const status = searchParams.get('status');
+    const externalReference = searchParams.get('external_reference');
+    const paymentType = searchParams.get('payment_type');
     const merchantOrderId = searchParams.get('merchant_order_id');
+    const preferenceId = searchParams.get('preference_id');
+    const siteId = searchParams.get('site_id');
+    const processingMode = searchParams.get('processing_mode');
+    const merchantAccountId = searchParams.get('merchant_account_id');
 
-    console.log('🔍 Parámetros de Mercado Pago:', {
-        idSala,
-        idReserva,
-        collectionStatus,
-        paymentId,
-        merchantOrderId,
-        allParams: Object.fromEntries(searchParams.entries())
-    });
+    // Verificar si el pago fue aprobado
+    const isPaymentApproved = status === 'approved' || collectionStatus === 'approved';
+
+    // Obtener todos los parámetros como objeto
+    const allParams = Object.fromEntries(searchParams.entries());
+    
+    console.log('Parámetros recibidos:', allParams);
 
     const getSala = async (id) => {
         try {
