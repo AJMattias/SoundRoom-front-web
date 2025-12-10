@@ -56,6 +56,12 @@ class ReservasServices {
         return reservas;
     }
 
+    async getReservasPorArtista() {
+        const reservas = await api.get(`/reservation/findReservationbyUser/`);
+        console.log("Reservas por artista: ", reservas)
+        return reservas;
+    }
+
 }
 
 export const ReservasService = new ReservasServices();

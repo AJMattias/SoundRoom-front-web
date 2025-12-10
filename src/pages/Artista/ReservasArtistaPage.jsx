@@ -4,33 +4,11 @@ import { useState, useEffect } from 'react';
 import ArtistHomeReservations from '../../components/ArtistHomeReservations'; 
 // Importamos la lista base de reservas para hacer el filtro
 import { reservas as todasLasReservas } from '../../data/reservas';
-import { useSearchParams } from 'react-router-dom';
+import { ReservasServices } from '../../services/ReservasServices';
 
 
 const ReservasPage = () => {
-
-    const [searchParams] = useSearchParams();
-
-    // Obtener todos los parámetros de MercadoPago
-    const collectionId = searchParams.get('collection_id');
-    const collectionStatus = searchParams.get('collection_status');
-    const paymentId = searchParams.get('payment_id');
-    const status = searchParams.get('status');
-    const externalReference = searchParams.get('external_reference');
-    const paymentType = searchParams.get('payment_type');
-    const merchantOrderId = searchParams.get('merchant_order_id');
-    const preferenceId = searchParams.get('preference_id');
-    const siteId = searchParams.get('site_id');
-    const processingMode = searchParams.get('processing_mode');
-    const merchantAccountId = searchParams.get('merchant_account_id');
-
-    // Verificar si el pago fue aprobado
-    const isPaymentApproved = status === 'approved' || collectionStatus === 'approved';
-
-    // Obtener todos los parámetros como objeto
-    const allParams = Object.fromEntries(searchParams.entries());
-
-    console.log('Parámetros recibidos:', allParams);
+    const [reservas, setReservas] = useState(null)
 
 
     // 1. Estado para la pestaña activa
@@ -76,10 +54,18 @@ const ReservasPage = () => {
         });
     };
 
+    const getMisReservas = async () => {        
+        const reservas = await ReservasServices.getReservasPorArtista();
+        setReservas(reservas);
+    }
+
     // --- LÓGICA DE FILTRADO Y FORMATO (Corre en cada cambio de pestaña) ---
     useEffect(() => {
         const now = new Date(); 
         let filteredList = [];
+        getMisReservas();
+        filteredList = reservas;
+
 
         if (seccionActiva === 'Futuras') {
             // FUTURAS: No canceladas Y (fecha Y hora de inicio) es MAYOR a la actual
