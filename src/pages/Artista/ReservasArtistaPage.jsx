@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import ArtistHomeReservations from '../../components/ArtistHomeReservations'; 
 // Importamos la lista base de reservas para hacer el filtro
 import { reservas as todasLasReservas } from '../../data/reservas';
-import { ReservasServices } from '../../services/ReservasServices';
+import { ReservasService } from "../../services/ReservasServices";
 
 
 const ReservasPage = () => {
@@ -55,7 +55,7 @@ const ReservasPage = () => {
     };
 
     const getMisReservas = async () => {        
-        const reservas = await ReservasServices.getReservasPorArtista();
+        const reservas = await ReservasService.getReservasPorArtista();
         setReservas(reservas);
     }
 
