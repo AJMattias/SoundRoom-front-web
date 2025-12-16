@@ -6,6 +6,7 @@ import { MdOutlineAttachMoney } from "react-icons/md"
 import { useParams, useSearchParams  } from 'react-router-dom';
 import { RoomService } from "../../services/SalaDeEnsayoService";
 import { ReservasService } from "../../services/ReservasServices";
+import HeaderReservaEstado from "../../components/HeaderReservaEstado";
 
 const ConfirmacionReservaPaga = () => {
 
@@ -15,6 +16,7 @@ const ConfirmacionReservaPaga = () => {
     const [loading, setLoading] = useState(true)
     const [formattedDate, setFormattedDate] = useState('')
     const [error, setError] = useState('')
+    const [reservaEstado, setReservaEstado] = useState('')
 
     // Obtener query params de la URL (los de Mercado Pago)
     const [searchParams] = useSearchParams();
@@ -43,6 +45,25 @@ const ConfirmacionReservaPaga = () => {
     
     console.log('Parámetros recibidos:', allParams);
 
+    const reservaStatus =(status)=>{
+        switch (status) {
+            case 'approved':
+                setReservaEstado('Aprobado');
+                console.log('estado: ', status)
+                return 'Aprobada';
+            case 'pending':
+                setReservaEstado('Pendiente');
+                console.log('estado: ', status)
+                return 'Pendiente';
+            case 'rejected':
+                setReservaEstado('Rechazada');
+                console.log('estado: ', status)
+                return 'Rechazada';
+            default:
+                break;
+        }
+    }
+
     const getSala = async (id) => {
         try {
             const response = await RoomService.getRoomBd(id);
@@ -62,11 +83,13 @@ const ConfirmacionReservaPaga = () => {
             // Formatear fecha correctamente
             if (response.date) {
                 const date = new Date(response.date);
+                console.log('Fecha original de la reserva:', response.date);
                 const formatted = date.toLocaleDateString('es-AR', {
                     day: '2-digit',
                     month: '2-digit',
                     year: 'numeric'
                 });
+                console.log('Fecha formateada:', formatted);
                 setFormattedDate(formatted);
                 console.log('✅ Reserva cargada. Fecha formateada:', formatted);
             }
@@ -101,18 +124,12 @@ const ConfirmacionReservaPaga = () => {
                 return;
             }
 
-            // Verificar que el pago fue aprobado
-            if (collectionStatus !== 'approved') {
-                setError(`El pago no fue aprobado. Estado: ${collectionStatus}`);
-                // Podrías redirigir a una página de error
-                // navigate('/reservas/pago-fallido');
-            }
-
             try {
                 // Ejecutar en paralelo
                 await Promise.all([
                     getSala(idSala),
-                    getReserva(idReserva)
+                    getReserva(idReserva),
+                    reservaStatus(status)
                 ]);
                 
                 // Verificar estado del pago
@@ -173,6 +190,7 @@ const ConfirmacionReservaPaga = () => {
         );
     }
     
+   
 
   return (
         <>
@@ -187,13 +205,7 @@ const ConfirmacionReservaPaga = () => {
                       <div className=" rounded-3 w-100 mx-2 mt-3 pt-3">
                           <div className="d-flex col-12 justify-content-around align-items-center">
                               <div className="">
-                                  <div className="d-flex justify-content-center mb-3">
-                                      <IoMdCheckmarkCircleOutline
-                                          size={50}
-                                          color="green" />
-                                  </div>
-                                  <h3 className="d-flex justify-content-center mb-3">Reserva Confirmada</h3>
-                                  <h5 className="d-flex justify-content-center mb-3">Tu reserva fue registrada con exito</h5>
+                                  <HeaderReservaEstado estado={reservaEstado} />
                               </div>
                           </div>
                       </div>
@@ -212,7 +224,7 @@ const ConfirmacionReservaPaga = () => {
                                       {/* Contenedor del texto (Etiqueta + Valor) */}
                                       <div className="d-flex flex-column justify-content-center">
                                           <span className="fw-bold">Fecha</span>
-                                          <span className="text-muted">{reservadate}</span>
+                                          <span className="text-muted">{formattedDate}</span>
                                       </div>
                                   </div>
                                   <div className="d-flex bg-body-tertiary rounded-3 align-items-center col-5 p-3 me-2 rounded">

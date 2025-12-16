@@ -42,8 +42,7 @@ import SearchSalasPage from './pages/Artista/SearchSalasPage';
 import VerSalaPage from './pages/Artista/VerSalaPage';
 import ReservarPage from './pages/Artista/ReservarPage';
 import ConfirmacionReservaPaga from './pages/Artista/ConfirmacionReservaPaga';
-import ConfirmacionReservaPendiente from './pages/Artista/ConfirmacionReservaPendiente ';
-import ConfirmacionReservaFallida from './pages/Artista/ConfirmacionReservaFallida ';
+import EditarPerfil from './pages/EditarPerfil';
 
 
 function App() {
@@ -106,8 +105,9 @@ function App() {
             <Route path="/artista/ver-sala/:id" element={<VerSalaPage />} />
             <Route path="/artista/reservar/:id" element={<ReservarPage />} />
             <Route path="/reservas/pago-exitoso" element={<ConfirmacionReservaPaga />} />
-            <Route path="/reservas/pago-fallido/" element={<ConfirmacionReservaPendiente />} />
-            <Route path="/reservas/pago-pendiente/" element={<ConfirmacionReservaFallida />} />
+            <Route path="/reservas/pago-fallido/" element={<ConfirmacionReservaPaga />} />
+            <Route path="/reservas/pago-pendiente/" element={<ConfirmacionReservaPaga />} />
+            <Route path="/artista/editar-perfil/:id" element={<EditarPerfil />} />
         </Route>
       </Route>
     </Routes>
