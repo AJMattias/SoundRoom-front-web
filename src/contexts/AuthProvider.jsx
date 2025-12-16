@@ -86,6 +86,12 @@ export const AuthProvider = ({ children }) => {
           token: action.payload.token,
           isAuthenticated: true,
         };
+      case "UPDATE":
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
+        return {
+          user: action.payload.user,
+          isAuthenticated: true,
+        };
       case "LOGOUT":
         localStorage.removeItem("user");
         localStorage.removeItem("token");
@@ -125,10 +131,13 @@ export const AuthProvider = ({ children }) => {
   const setToken = (token) => {
     dispatch({  payload: { token }})
   };
+  const update = (user) => {
+    dispatch({ type: "UPDATE", payload: { user } });
+  };
 
   return (
     <AuthContext.Provider
-      value={{ authState, login, logout, getToken, getUser , setToken}}
+      value={{ authState, login, logout, getToken, getUser , setToken, update}}
     >
       {children}
     </AuthContext.Provider>

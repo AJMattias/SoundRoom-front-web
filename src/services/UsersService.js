@@ -297,6 +297,9 @@ class UserService {
             password: password,
         });
         setLoggedUser(user);
+        if(!user){
+            return {status: 'error', message: 'Error updating user'}
+        }
         return user;
     }
 

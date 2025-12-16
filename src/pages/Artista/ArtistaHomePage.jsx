@@ -1,62 +1,3 @@
-// import { useContext, useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { AuthContext } from "../../contexts/AuthContext";
-// import  ArtistHomeCard from "../../components/ArtistHomeCard"
-// import userIcon from "../../assets/user.png"
-
-// const ArtistaHomePage = () => {
-
-//     const navigate = useNavigate();
-//     const {authState } =  useContext(AuthContext)
-//     const user= authState.user.user
-//     console.log('user: ', user, 'authState.user.user', authState.user.user )
-
-//     useEffect(() => {
-
-//     }, [])
-
-//   return (
-//     <div className="container mx-5">
-//         <div className="col-11 bg-secondary d-flex flex-column rounded-3 bg-light p-5 mt-1">
-//             <div className="flex d-flex">
-//                 <h2>Hola {user.name}</h2>
-//                 {/* icno notificacions */}
-//             </div>
-//             <div className="flex d-flex bg-white border border-2 border-tertiary rounded-3">
-//                 {/* card */}
-//                 <div className="col-12 d-flex flex-column justify-content-between">
-//                   <img
-//                     src={userIcon}
-//                     alt="user"
-//                     className="mt-2"
-//                     style={{width: '80px', height: '80px'}}
-//                     />
-//                   <ArtistHomeCard artista={user} />
-
-//                   {/* botonera */}
-//                   <div className="container col-8 d-flex justify-content-between mt-3 mb-3">
-//                     <button
-//                       className="btn btn-warning border border-2"
-//                       onClick={()=> navigate("/artist/edit-profile")}
-//                     >Editar perfil</button>
-//                     <button
-//                       className="btn btn-warning border border-2"
-//                     >Cambiar contraseña</button>
-//                     <button
-//                       className="btn btn-warning border border-2"
-//                     >Dar de baja cuenta</button>
-//                   </div>
-//                 </div>
-//                 <div>
-
-//                 </div>
-//             </div>
-//         </div>
-//     </div>
-//   )
-// }
-
-// export default ArtistaHomePage
 
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -129,7 +70,7 @@ const ArtistaHomePage = () => {
           <div className="container col-12 d-flex justify-content-center mt-3 mb-3 gap-3">
             <button
               className="btn btn-warning"
-              onClick={() => navigate("/artist/edit-profile")}
+              onClick={() => navigate("/artista/editar-perfil/" + user.id)}
             >
               Editar perfil
             </button>
