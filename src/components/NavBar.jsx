@@ -10,7 +10,7 @@ const NavBar = ({title}) => {
   console.log('authState.isAuthenticated: ', authState.isAuthenticated)
   if(authState.user){
     console.log(authState.user)
-    console.log('authState.user.user.name: ', authState.user.user.name)
+    console.log('authState.user.name: ', authState.user.name)
   }
   
   
