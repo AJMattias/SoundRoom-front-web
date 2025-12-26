@@ -23,7 +23,7 @@ import VerComissions from './pages/Admin/VerComissions'
 import ComissionHistory from './pages/Admin/ComissionHistory'
 import AdminUsers from './pages/Admin/AdminUsers'
 import ForgotPasswordScreen from './pages/Auth/ForgotPasswordScreen'
-import ChangePasswordScreen from './pages/Auth/ChangePasswordScreen'
+import NewPasswordScreen from './pages/Auth/NewPasswordScreen'
 import ArtistRoutes from './routes/ArtistRoutes'
 import OwnerRoutes from './routes/OwnerRoutes'
 import ArtistLayout from './pages/Artista/ArtistLayout'
@@ -43,6 +43,7 @@ import VerSalaPage from './pages/Artista/VerSalaPage';
 import ReservarPage from './pages/Artista/ReservarPage';
 import ConfirmacionReservaPaga from './pages/Artista/ConfirmacionReservaPaga';
 import EditarPerfil from './pages/EditarPerfil';
+import ChangePasswordScreen from './pages/Auth/ChangePasswordScreen';
 
 
 function App() {
@@ -54,9 +55,10 @@ function App() {
       <Route path="/login" element={< Login/>}></Route>
       <Route path="/register" element={< Register/>}></Route>
       <Route path="/home" element={< Home/>}></Route>
-      <Route path="/forgotPassword" element={< ForgotPasswordScreen/>}></Route>
-      {/* <Route path="/changePassword" element={< ChangePasswordScreen/>}></Route> */}
-      <Route path="/forgotPassword/reset-password/:token" element={< ChangePasswordScreen />}></Route>
+      <Route path="/olvide-contraseña" element={< ForgotPasswordScreen/>}></Route>
+      <Route path="/cambiar-contraseña" element={< NewPasswordScreen/>}></Route>
+      <Route path="/cambiar-contraseñaVN" element={< ChangePasswordScreen/>}></Route>
+      <Route path="/forgotPassword/reset-password/:token" element={< NewPasswordScreen />}></Route>
       <Route element={<AdminRoutes />}>
         <Route element={<AdminLayout />}>
           <Route path="/admin" element={<AdminDashboard />} />

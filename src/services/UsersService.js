@@ -245,6 +245,7 @@ import { api } from "../api/ApiClient";
 import { getJwtToken, setJwtToken, setLoggedUser} from "../storage/LocalStorage";
 
 class UserService {
+
     async login(email, password) {
         console.log('login: ', email, password)
         const loginResponse = await api.post("auth", {
@@ -338,6 +339,17 @@ class UserService {
             enabled: "deshabilitado",
         });
         setLoggedUser(user);
+        return user;
+    }
+
+    async bajaUser(userId
+    //    , email, name, lastName
+    ) {
+        const user = await api.put(`/users/changeUserState/?id=${userId}`, {
+            enabled: "baja",
+        });
+        setLoggedUser(user);
+        
         return user;
     }
 
@@ -471,6 +483,52 @@ class UserService {
             console.error("Error changing password:", error);
             return null;
         }
+    }
+
+    async verifyCurrentPassword(currentPassword) {
+        console.log('password a cambiar: ',  currentPassword.currentPassword);
+        const tokenResponse = await api.post("/user/verifyPassword", { password: currentPassword.currentPassword });
+        return tokenResponse;
+    }
+
+    // async cambiarPassword(oldpassword, currentPassword) {
+    //     console.log('cambiar password: ', oldpassword, currentPassword);
+    //     const tokenResponse = await api.post("/user/cambiarContrasenia", { oldpassword: oldpassword, password: currentPassword });
+    //     console.log('response cambiar password: ', tokenResponse);
+    //     return tokenResponse;
+    // }
+
+    // version ejorada usando response.status
+    async cambiarPassword(oldPassword, newPassword) {
+    try {
+        console.log('Enviando cambio de contraseña:', { oldPassword, newPassword });
+        
+        const response = await api.post("/user/cambiarContrasenia", {
+        oldpassword: oldPassword,
+        password: newPassword
+        });
+        
+        // Si llegamos aquí, la petición fue exitosa (status 2xx)
+        console.log('Respuesta exitosa:', response);
+        
+        // Retorna el data directamente o un objeto con éxito
+        return {
+            success: true,
+            user: response.user, // Incluye cualquier dato adicional del backend
+            message: 'Contraseña cambiada exitosamente'
+        };
+        
+    } catch (error) {
+        console.error('Error cambiando contraseña:', error);
+        
+        // Extraer mensaje de error del backend si está disponible
+        const errorMessage = error.response?.data?.error 
+        || error.response?.data?.message 
+        || error.message 
+        || 'Error al cambiar la contraseña';
+        
+        throw new Error(errorMessage); // Lanza el error para manejarlo en el componente
+    }
     }
 
     
