@@ -17,12 +17,15 @@ const ArtistHomeReservations = ({ reservasSelected }) => {
     
     if(reservas.length > 0){
         reservas.map((reserva) => {
-            if(reserva.date > dateNow ){
-            console.log('dateNow: ', dateNow, 'reserva date: ', reserva.date)
-            }
-            console.log('reserva.date', reserva.date, reserva.dateNow)
-            console.log('reserva pasada: ', reserva.date < dateNow)
+            //console.log('dateNow dentro del map: ', reserva.date, dateNow)
             reserva.date = new Date(reserva.date)
+            console.log('dateNow: ', dateNow, 'reserva date: ', reserva.date)
+            // if(reserva.date > dateNow ){
+            // }
+            console.log('reserva.date', reserva.date, dateNow)
+            console.log('reserva pasada menor a datenow: ', reserva.date < dateNow)
+            //reserva.date = new Date(reserva.date)
+        
         })
     }
 
@@ -45,16 +48,16 @@ const ArtistHomeReservations = ({ reservasSelected }) => {
                         </div>
                         <div className="flex-shrink-0 ms-3 mt-2">
                         {/* El uso de '==' es aceptable aquí si los valores son booleanos o strings */}
-                        {reserva.canceled === false && reserva.date < dateNow && (
+                        {reserva.canceled === 'false' && reserva.date < dateNow && (
                                 <div className="bg-warning p-1 rounded-1">Realizada</div>
                         )}
-                        {reserva.canceled === false && reserva.date > new Date() &&( 
+                        {reserva.canceled === 'false' && reserva.date > new Date() &&( 
                             <div className= "d-flex flex-column gap-2">
                                 <div className="bg-warning p-1 rounded-1">Reservado</div>
                                 <div className="btn btn-sm btn-outline-warning">Cancelar</div>
                             </div>
                         )}
-                        {reserva.canceled === true &&(
+                        {reserva.canceled === 'true' &&(
                             <div className="bg-danger p-1 rounded-1">Cancelada</div>
                         )}
                         
