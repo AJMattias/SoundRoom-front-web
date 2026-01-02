@@ -560,36 +560,58 @@ const ArtistaHomePage = () => {
 
   const parseReservasFechas = (listToParse) => {
     if (!listToParse || listToParse.length === 0) {
+      console.log("parseReservasFechas: No hay datos para parsear");
       return [];
     }
 
-    return listToParse.map((reserva) => {
+    console.log("=== INICIANDO PARSEO DE FECHAS ===");
+    console.log("Cantidad de reservas a parsear:", listToParse.length);
+
+    const reservasParseadas = listToParse.map((reserva, index) => {
+      console.log(`Parseando reserva ${index + 1}:`, {
+        id: reserva.id,
+        dateOriginal: reserva.date,
+        tipoDate: typeof reserva.date,
+        hsStart: reserva.hsStart,
+        hsEnd: reserva.hsEnd
+      });
+
       try {
         let fechaDate;
         let fechaString = "";
 
+        // REVISAR ESTA PARTE CRÍTICAMENTE
         if (reserva.date instanceof Date) {
           fechaDate = reserva.date;
           fechaString = reserva.date.toISOString();
+          console.log(`Reserva ${index + 1}: Ya era Date`, fechaDate);
         } else if (typeof reserva.date === "string") {
+          console.log(`Reserva ${index + 1}: Es string`, reserva.date);
+          
           fechaString = reserva.date;
+          
+          // IMPORTANTE: Asegurar el formato correcto
           if (reserva.date.includes("T")) {
             fechaDate = new Date(reserva.date);
           } else {
-            // IMPORTANTE: Asegurar que incluimos el horario
+            // ESTO PODRÍA ESTAR CREANDO DUPLICADOS
             const fechaConHora = `${reserva.date}T${reserva.hsStart}:00`;
+            console.log(`Reserva ${index + 1}: Creando fecha con hora`, fechaConHora);
             fechaDate = new Date(fechaConHora);
           }
         } else if (typeof reserva.date === "number") {
           fechaDate = new Date(reserva.date);
           fechaString = fechaDate.toISOString();
+          console.log(`Reserva ${index + 1}: Era timestamp`, reserva.date);
         } else {
+          console.warn(`Reserva ${index + 1}: Tipo no reconocido`, typeof reserva.date);
           fechaDate = new Date();
           fechaString = "Fecha inválida";
         }
 
+        // Verificar si la fecha es válida
         if (isNaN(fechaDate.getTime())) {
-          console.warn("Fecha inválida:", reserva.date);
+          console.warn(`Reserva ${index + 1}: Fecha inválida`, reserva.date);
           return {
             ...reserva,
             date: fechaString,
@@ -604,14 +626,23 @@ const ArtistaHomePage = () => {
           .toString()
           .padStart(2, "0")}/${year}`;
 
-        return {
+        const resultado = {
           ...reserva,
           date: fechaString,
           dateDisplay: fechaFormateada,
-          fechaDate: fechaDate, // Añadimos el objeto Date para facilitar comparaciones
         };
+
+        console.log(`Reserva ${index + 1} resultado:`, {
+          id: resultado.id,
+          date: resultado.date,
+          dateDisplay: resultado.dateDisplay,
+          fechaDate: fechaDate.toString()
+        });
+
+        return resultado;
+
       } catch (error) {
-        console.error("Error al parsear fecha:", error);
+        console.error(`Error al parsear reserva ${index + 1}:`, error);
         return {
           ...reserva,
           date: String(reserva.date),
@@ -619,7 +650,13 @@ const ArtistaHomePage = () => {
         };
       }
     });
+
+    console.log("=== FIN DEL PARSEO ===");
+    console.log("Reservas parseadas:", reservasParseadas);
+    
+    return reservasParseadas;
   };
+  
 
   // CALCULAR RESERVAS FUTURAS CON USEMEMO
   const reservasFuturas = useMemo(() => {
@@ -628,30 +665,35 @@ const ArtistaHomePage = () => {
     }
 
     const ahora = new Date();
-    console.log("Fecha actual para filtrado:", ahora);
-    console.log("Total de reservas a filtrar:", reservasTodas.length);
-
-    const reservasFuturasFiltradas = reservasTodas.filter(reserva => {
+    
+    // Filtrar por fecha futura
+    const futuras = reservasTodas.filter(reserva => {
       try {
-        // Crear fecha de reserva combinando date y hsStart
-        const fechaReservaStr = reserva.date.split('T')[0]; // Obtener solo la parte de la fecha
+        const fechaReservaStr = reserva.date.split('T')[0];
         const fechaReservaCompleta = new Date(`${fechaReservaStr}T${reserva.hsStart}:00`);
-        
-        console.log("Comparando:", {
-          fechaReserva: fechaReservaCompleta,
-          fechaActual: ahora,
-          esFutura: fechaReservaCompleta > ahora
-        });
-
         return fechaReservaCompleta > ahora;
       } catch (error) {
-        console.error("Error al comparar fecha:", error, reserva);
         return false;
       }
     });
 
-    console.log("Reservas futuras encontradas:", reservasFuturasFiltradas.length);
-    return reservasFuturasFiltradas;
+    // ELIMINAR DUPLICADOS CONFIRMADOS - método agresivo
+    const idsUnicos = new Set();
+    const reservasFinales = [];
+    
+    futuras.forEach(reserva => {
+      // Crear una clave única que combine TODO
+      const claveUnica = `${reserva.id}_${reserva.date}_${reserva.hsStart}_${reserva.hsEnd}_${reserva.idRoom?.id || ''}`;
+      
+      if (!idsUnicos.has(claveUnica)) {
+        idsUnicos.add(claveUnica);
+        reservasFinales.push(reserva);
+      } else {
+        console.log("DUPLICADO ELIMINADO:", claveUnica);
+      }
+    });
+
+    return reservasFinales;
   }, [reservasTodas]);
 
   const bajarUser = async () => {
@@ -698,7 +740,20 @@ const ArtistaHomePage = () => {
 
         const reservasData = await getMisReservas();
         console.log("Datos de reservas obtenidos:", reservasData);
+        console.log("Cantidad de reservas:", reservasData?.length || 0);
 
+        // Mostrar cada reserva con TODOS sus datos
+        reservasData?.forEach((reserva, index) => {
+          console.log(`Reserva ${index + 1}:`, {
+            id: reserva.id,
+            date: reserva.date,
+            hsStart: reserva.hsStart,
+            hsEnd: reserva.hsEnd,
+            idRoom: reserva.idRoom,
+            // Mostrar todo el objeto
+            ...reserva
+          });
+        });
         if (reservasData && reservasData.length > 0) {
           console.log("Cantidad de reservas obtenidas:", reservasData.length);
           console.log("Primera reserva (sin parsear):", reservasData[0]);

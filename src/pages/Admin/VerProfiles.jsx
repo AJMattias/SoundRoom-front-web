@@ -38,24 +38,24 @@ const VerProfiles = () => {
         console.log('permiso deleted, response: ', response)
       }
 
-        const handleDelete = async (permiso) => {
-          Swal.fire({
-            title: "¿Estás seguro?",
-            text: `Eliminarás el permiso: ${permiso.name}`,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#d33333",
-            cancelButtonColor: "#3085d6",
-            confirmButtonText: "Sí, eliminar",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              console.log("Permiso a eliminar:", permiso)
-              deletePerfil(permiso.id)
-              setPerfiles([])
-              getPerfiles()
-            }
-          })
-        }
+      const handleDelete = async (permiso) => {
+        Swal.fire({
+          title: "¿Estás seguro?",
+          text: `Eliminarás el permiso: ${permiso.name}`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#d33333",
+          cancelButtonColor: "#3085d6",
+          confirmButtonText: "Sí, cancelar",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            console.log("Permiso a eliminar:", permiso)
+            deletePerfil(permiso.id)
+            setPerfiles([])
+            getPerfiles()
+          }
+        })
+      }
 
     return (
     

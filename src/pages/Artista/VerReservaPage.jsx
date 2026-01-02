@@ -7,64 +7,23 @@ import { Navigate, useNavigate, useParams, useSearchParams  } from 'react-router
 import { RoomService } from "../../services/SalaDeEnsayoService";
 import { ReservasService } from "../../services/ReservasServices";
 import HeaderReservaEstado from "../../components/HeaderReservaEstado";
+import Swal from "sweetalert2";
 
-const ConfirmacionReservaPaga = () => {
+const VerReservaPage = () => {
 
     const navigate = useNavigate();
-
+    const { idReserva } = useParams()
     const [sala, setSala] = useState(null)
     const [reserva, setReserva] = useState(null)
-    const [reservadate, setReservadate] = useState()
     const [loading, setLoading] = useState(true)
     const [formattedDate, setFormattedDate] = useState('')
     const [error, setError] = useState('')
     const [reservaEstado, setReservaEstado] = useState('')
 
-    // Obtener query params de la URL (los de Mercado Pago)
-    const [searchParams] = useSearchParams();
-
-    const idSala = searchParams.get('idSala');
-    const idReserva = searchParams.get('idReserva');
     
-    // Obtener todos los parámetros de MercadoPago
-    // const collectionId = searchParams.get('collection_id');
-    // const collectionStatus = searchParams.get('collection_status');
-    // const paymentId = searchParams.get('payment_id');
-    // const status = searchParams.get('status');
-    // const externalReference = searchParams.get('external_reference');
-    // const paymentType = searchParams.get('payment_type');
-    // const merchantOrderId = searchParams.get('merchant_order_id');
-    // const preferenceId = searchParams.get('preference_id');
-    // const siteId = searchParams.get('site_id');
-    // const processingMode = searchParams.get('processing_mode');
-    // const merchantAccountId = searchParams.get('merchant_account_id');
+    console.log('id Reserva: ', idReserva);
 
-    // Verificar si el pago fue aprobado
-    //const isPaymentApproved = status === 'approved' || collectionStatus === 'approved';
 
-    // Obtener todos los parámetros como objeto
-    const allParams = Object.fromEntries(searchParams.entries());
-    
-    console.log('Parámetros recibidos:', allParams);
-
-    const reservaStatus =(status)=>{
-        switch (status) {
-            case 'approved':
-                setReservaEstado('Aprobado');
-                console.log('estado: ', status)
-                return 'Aprobada';
-            case 'pending':
-                setReservaEstado('Pendiente');
-                console.log('estado: ', status)
-                return 'Pendiente';
-            case 'rejected':
-                setReservaEstado('Rechazada');
-                console.log('estado: ', status)
-                return 'Rechazada';
-            default:
-                break;
-        }
-    }
 
     // const getSala = async (id) => {
     //     try {
@@ -117,24 +76,66 @@ const ConfirmacionReservaPaga = () => {
         }
     }
 
+    const cancelarReserva = async () => {
+        try {
+            console.log('🔍 Cancelando reserva en backend...');
+            const response = await ReservasService.cancelarReserva(idReserva);
+            console.log('✅ Reserva cancelada:', response);
+            if(response === true){
+                navigate('/artista/');
+            }else if(response=== false)
+            {
+                handleCancelarFalse(idReserva)
+            }
+        } catch (error) {
+            console.error('❌ Error cancelando reserva:', error);
+        }
+    };
+
+    const handleCancelar = async (idReserva) => {
+        Swal.fire({
+        title: "¿Estás seguro de cancelar reserva?",
+        text: `Esta accionn es irreversible`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33333",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Sí, eliminar",
+        }).then((result) => {
+        if (result.isConfirmed) {
+            console.log("reserva a eliminar:", idReserva)
+            cancelarReserva(idReserva)
+        }
+        })
+    }
+
+    const handleCancelarFalse = async (idReserva) => {
+        Swal.fire({
+        title: "No se pudo cancelar reserva",
+        text: `Intentelo nuevamente mas tarde`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33333",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Entendido",
+        }).then((result) => {
+        if (result.isDismissed) {
+            console.log("reserva no se pudo cancelar:", idReserva)
+        }
+        })
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             setError('');
-            
-            // Validar que vengan los parámetros necesarios
-            if (!idSala || !idReserva) {
-                setError('Faltan parámetros en la URL');
-                setLoading(false);
-                return;
-            }
 
             try {
                 // Ejecutar en paralelo
                 await Promise.all([
                     //getSala(idSala),
                     getReserva(idReserva),
-                    reservaStatus(status)
+                    //reservaStatus(status)
                 ]);
                 
                 // Verificar estado del pago
@@ -149,7 +150,7 @@ const ConfirmacionReservaPaga = () => {
         };
 
         fetchData();
-    }, [idSala, idReserva]);
+    }, [ idReserva]);
 
     useEffect(() => {
         if (sala && reserva) {
@@ -258,7 +259,7 @@ const ConfirmacionReservaPaga = () => {
                               <div className="d-flex flex-column col border border-bg-secondary rounded-top-3 col-10">
 
                                   <div className="d-flex bg-body-secondary col-12 rounded-top-3 px-3 py-2 align-items-center"
-                                    onClick={() => navigate('/sala/' + sala.id)}
+                                    onClick={() => navigate('/artista/ver-sala/' + sala._id)}
                                     style={{ cursor: 'pointer' }}
                                     >
                                       <IoMdMusicalNotes size={35} className="text-warning me-3 mt-2" />
@@ -289,12 +290,15 @@ const ConfirmacionReservaPaga = () => {
                                   </div>
 
                               </div>
-
                               <div className="d-flex gap-4 justify-content-center col-10 align-items-center mt-3">
                                   <button className="btn btn-outline-warning mt-3 text-dark">Descargar</button>
-                                  <button className="btn btn-outline-warning mt-3 text-dark">Cancelar</button>
+                                {reserva.canceled === "false" &&
+                                  <button 
+                                  className="btn btn-outline-warning mt-3 text-dark"
+                                  onClick={()=> handleCancelar(idReserva)}
+                                  >Cancelar Reserva</button>
+                                }
                               </div>
-
                           </div>
                       </div></>    
         )}
@@ -302,4 +306,4 @@ const ConfirmacionReservaPaga = () => {
   )
 }
 
-export default ConfirmacionReservaPaga
+export default VerReservaPage

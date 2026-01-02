@@ -384,7 +384,7 @@ const ReservasPage = () => {
         return (
             <div className="w-100 d-flex justify-content-center align-items-center" style={{ height: '300px' }}>
                 <div className="spinner-border text-warning" role="status">
-                    <span className="visually-hidden">Cargando reservas...</span>
+                    <span className="visually-hidden">Cargando reservas</span>
                 </div>
                 <span className="ms-3">Cargando reservas...</span>
             </div>

@@ -20,7 +20,8 @@ const HeaderReservaEstado = ({ estado }) => {
     return (
         <div className="d-flex flex-column align-items-center col-12 mb-3">
             <IconoReservaEstado estado={estado} />
-            <h3 className="d-flex justify-content-center mb-3">Reserva {estado}</h3>
+            {/* <h3 className="d-flex justify-content-center mb-3">Reserva {estado}</h3> */}
+            <h3 className="d-flex justify-content-center mb-3">Reserva</h3>
             <h5 className="d-flex justify-content-center mb-3">{texto}</h5>
         </div>
     );

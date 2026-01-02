@@ -44,6 +44,7 @@ import ReservarPage from './pages/Artista/ReservarPage';
 import ConfirmacionReservaPaga from './pages/Artista/ConfirmacionReservaPaga';
 import EditarPerfil from './pages/EditarPerfil';
 import ChangePasswordScreen from './pages/Auth/ChangePasswordScreen';
+import VerReservaPage from './pages/Artista/VerReservaPage';
 
 
 function App() {
@@ -110,6 +111,8 @@ function App() {
             <Route path="/reservas/pago-fallido/" element={<ConfirmacionReservaPaga />} />
             <Route path="/reservas/pago-pendiente/" element={<ConfirmacionReservaPaga />} />
             <Route path="/artista/editar-perfil/:id" element={<EditarPerfil />} />
+            <Route path="/artista/reserva/:idReserva" element={<VerReservaPage />} />
+
         </Route>
       </Route>
     </Routes>
