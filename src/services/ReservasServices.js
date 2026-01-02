@@ -62,6 +62,16 @@ class ReservasServices {
         return reservas;
     }
 
+    async cancelarReserva(id) {
+        const reservas = await api.get(`/reservation/cancel/?id=${id}`);
+        console.log("Reserva cancelada por artista: ", reservas.canceled)
+        if(reservas.canceled){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }
 
 export const ReservasService = new ReservasServices();

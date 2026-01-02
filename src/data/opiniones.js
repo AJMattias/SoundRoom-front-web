@@ -10,7 +10,14 @@ export const opiniones = [
       "calleDireccion": "Av. Corrientes",
       "precioHora": 2500,
       "numeroDireccion": "1234",
-      "imagenes": ["sala1.jpg", "sala2.jpg"],
+      "imagenes": [{
+        url: "https://placehold.co/100",
+        titulo: "Imagen 1"
+        }, 
+        {
+          url: "https://placehold.co/100",
+          titulo: "Imagen 2"
+        }],
       "idOwner": "64d5f8a1b4d5e3a2c8f7b100",
       "duracionTurno": 60,
       "createdAt": "2024-01-10T08:00:00.000Z",
@@ -34,7 +41,14 @@ export const opiniones = [
       "calleDireccion": "Calle Florida",
       "precioHora": 1800,
       "numeroDireccion": "567",
-      "imagenes": ["studio1.jpg", "studio2.jpg", "studio3.jpg"],
+      "imagenes": [{
+        url: "https://placehold.co/100",
+        titulo: "Imagen 1"
+        }, 
+        {
+          url: "https://placehold.co/100",
+          titulo: "Imagen 2"
+        }],
       "idOwner": "64d5f8a1b4d5e3a2c8f7b101",
       "duracionTurno": 120,
       "createdAt": "2024-01-12T10:30:00.000Z",
@@ -59,7 +73,14 @@ export const opiniones = [
       "calleDireccion": "Av. Santa Fe",
       "precioHora": 3200,
       "numeroDireccion": "890",
-      "imagenes": ["lab1.jpg"],
+      "imagenes": [{
+        url: "https://placehold.co/100",
+        titulo: "Imagen 1"
+        }, 
+        {
+          url: "https://placehold.co/100",
+          titulo: "Imagen 2"
+        }],
       "idOwner": "64d5f8a1b4d5e3a2c8f7b102",
       "duracionTurno": 90,
       "createdAt": "2024-01-14T14:15:00.000Z",
