@@ -242,23 +242,57 @@
 // userService.js
 
 import { api } from "../api/ApiClient";
-import { getJwtToken, setJwtToken, setLoggedUser} from "../storage/LocalStorage";
+import { getJwtToken, removeLoggedUser, setJwtToken, setLoggedUser} from "../storage/LocalStorage";
 
 class UserService {
 
+    // async login(email, password) {
+    //     console.log('login: ', email, password)
+    //     const loginResponse = await api.post("auth", {
+    //         email: email,
+    //         password: password,
+    //     });
+    //     console.log('Response login: ', loginResponse)
+    //     //console.log('token: ', loginResponse.token)
+    //     if (loginResponse.token) {
+    //         setJwtToken(loginResponse.token);
+    //         setLoggedUser(loginResponse.user);
+    //     }
+    //     return loginResponse;
+    // }
+
+    //login v2 con status error:
     async login(email, password) {
-        console.log('login: ', email, password)
-        const loginResponse = await api.post("auth", {
-            email: email,
-            password: password,
-        });
-        console.log('Response login: ', loginResponse)
-        //console.log('token: ', loginResponse.token)
-        if (loginResponse.token) {
-            setJwtToken(loginResponse.token);
-            setLoggedUser(loginResponse.user);
+        try {
+            console.log('Enviando login...', email);
+            // Gracias a tu interceptor, 'data' ya es el JSON (user y token)
+            const data = await api.post("auth", { email, password });
+
+            if (data && data.token) {
+                if (typeof setJwtToken === 'function') setJwtToken(data.token);
+                if (typeof setLoggedUser === 'function') setLoggedUser(data.user);
+                return data;
+            }
+            
+            return { hasError: true, message: "Respuesta inválida" };
+
+        } catch (error) {
+            console.error("Error capturado en login:", error);
+            
+            // REVISIÓN: Aquí 'error' es una instancia de ApiException (línea 43 de tu ApiClient)
+            // Verificamos el status que tú mismo seteaste en el interceptor
+            if (error.status === 401 || error.errorCode === "AUTH_REQUIRED") {
+                return { 
+                    hasError: true, 
+                    message: "El email o la contraseña son incorrectos" 
+                };
+            }
+
+            return { 
+                hasError: true, 
+                message: "Error de conexión con el servidor" 
+            };
         }
-        return loginResponse;
     }
 
     async backupBD() {
@@ -425,9 +459,10 @@ class UserService {
     async resetPassword(email) {
         try {
             const response = await api.post("/user/forgot-password", { email });
-            console.log('response userService: ', response, 'status: ', response.estatus)
+            console.log('response userService: ', response, 'status: ', response.estatus,  "token: ", response.token);
             if (response.estatus === 200) {
                 // Éxito: Mostrar un mensaje al usuario indicando que revise su correo
+                removeLoggedUser();
                 setJwtToken(response.token);
                 return { success: true, message: response.message, token: response.token };
             } else {
@@ -439,7 +474,7 @@ class UserService {
                 // El servidor respondió con un código de error
                 if (error.response.data.estatus === 404) {
                     return { success: false, message: error.response.data.message };
-                } else if (error.response.status === 500) {
+                } else if (error.response.estatus === 500) {
                     return { success: false, message: error.response.data.message };
                 } else {
                     return { success: false, message: `Error del servidor: ${error.response.status}` };
@@ -455,33 +490,67 @@ class UserService {
     }
 
     //cambiar contraseña, con usuario logueado
+    // async changePassword(token, password) {
+    //     try {
+    //         //const changedPassword = await api.post(`/reset-password/${token}`, { newPassword: password });
+    //         console.log('llamando al back, changePasword con token y password: ', token, password)
+    //         const response = await fetch(`https://sound-room-api.vercel.app/reset-password/${token}`, {
+    //             method: "POST",
+    //             headers: {
+    //               "Content-Type": "application/json",
+    //              // Authorization:`Bearer ${token}`
+    //             },
+    //             body: JSON.stringify({ newPassword: password }),
+    //           });
+
+    //           const changedPassword = await response.json();
+    //         // if (changedPassword.token) {
+    //         //     setJwtToken(changedPassword.token);
+    //         //     setLoggedUser(changedPassword.user);
+    //         // }
+    //         console.log('changedPassword: ', changedPassword)
+    //         if (changedPassword.token) {
+    //             console.log("ChangedPassword token: ", changedPassword.token);
+    //             console.log("ChangedPassword user: ", changedPassword.user);
+    //             setJwtToken(changedPassword.token);
+    //             setLoggedUser(changedPassword.user);
+    //         }
+    //         return changedPassword;
+    //     } catch (error) {
+    //         console.error("Error changing password:", error);
+    //         return null;
+    //     }
+    // }
+    
+    //v2: 
     async changePassword(token, password) {
         try {
-            //const changedPassword = await api.post(`/reset-password/${token}`, { newPassword: password });
-            console.log('llamando al back, changePasword con token y password: ', token, password)
-            const response = await fetch(`http://localhost:3000/reset-password/${token}`, {
+            const response = await fetch(`https://sound-room-api.vercel.app/reset-password/${token}`, {
                 method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                 // Authorization:`Bearer ${token}`
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ newPassword: password }),
-              });
+            });
 
-              const changedPassword = await response.json();
-            // if (changedPassword.token) {
-            //     setJwtToken(changedPassword.token);
-            //     setLoggedUser(changedPassword.user);
-            // }
-            console.log('changedPassword: ', changedPassword)
-            if (changedPassword.token) {
-                setJwtToken(changedPassword.token);
-                setLoggedUser(changedPassword.user);
+            const data = await response.json();
+
+            // Si la respuesta no es 2xx (por ejemplo, un 400)
+            if (!response.ok) {
+                return { 
+                    error: true, 
+                    status: response.status, 
+                    message: data.message || "Error al cambiar la contraseña" 
+                };
             }
-            return changedPassword;
+
+            // Si todo salió bien
+            if (data.token) {
+                setJwtToken(data.token);
+                setLoggedUser(data.user);
+            }
+            return data; 
         } catch (error) {
             console.error("Error changing password:", error);
-            return null;
+            return { error: true, message: "Error de conexión con el servidor" };
         }
     }
 

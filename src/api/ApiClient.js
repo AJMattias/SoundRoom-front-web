@@ -40,11 +40,19 @@ axiosInstance.interceptors.response.use(
         console.error("Response error:", error);
         const response = error.response || {}; // Manejo si error.response es undefined
         return Promise.reject(
+            // new ApiException(
+            //     response.status || 500,
+            //     response.data?.error || "UNKNOWN_ERROR",
+            //     response.data?.errorCode || "UNKNOWN_ERROR_CODE",
+            //     response.data?.message || "Ocurrió un error inesperado",
+            //     response.data?.arguments
+            // )
             new ApiException(
                 response.status || 500,
                 response.data?.error || "UNKNOWN_ERROR",
                 response.data?.errorCode || "UNKNOWN_ERROR_CODE",
-                response.data?.message || "Ocurrió un error inesperado",
+                // Si el back no manda message, usamos el tuyo
+                response.data?.message || error.message || "Ocurrió un error inesperado", 
                 response.data?.arguments
             )
         );

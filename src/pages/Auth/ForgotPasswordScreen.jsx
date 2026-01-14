@@ -32,6 +32,7 @@ const ForgotPasswordScreen = () => {
             setIsSuccess(result.success);
             //guardar token result.token
             const token = result.token
+            console.log('reset password token: ', token)
 
             //TODO navegar a reset-password/:token
             navigate(`reset-password/${token}`, { state: { type: "reset-password-email" } })
