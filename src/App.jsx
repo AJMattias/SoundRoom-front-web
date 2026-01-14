@@ -59,7 +59,7 @@ function App() {
       <Route path="/olvide-contraseña" element={< ForgotPasswordScreen/>}></Route>
       <Route path="/cambiar-contraseña" element={< NewPasswordScreen/>}></Route>
       <Route path="/cambiar-contraseñaVN" element={< ChangePasswordScreen/>}></Route>
-      <Route path="/forgotPassword/reset-password/:token" element={< NewPasswordScreen />}></Route>
+      <Route path="/olvide-contraseña/reset-password/:token" element={< NewPasswordScreen />}></Route>
       <Route element={<AdminRoutes />}>
         <Route element={<AdminLayout />}>
           <Route path="/admin" element={<AdminDashboard />} />

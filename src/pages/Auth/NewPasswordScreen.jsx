@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -8,58 +9,61 @@ import UsersService from "../../services/UsersService";
 import { useLocation } from "react-router-dom";
 
 const NewPasswordScreen = () => {
-  //para olvide mi contraseña
-  //const { setToken} =  useContext(AuthContext)
-  const location = useLocation();
-  const { login } = useContext(AuthContext);
-  const { token } = useParams();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
-  } = useForm();
-  const [showRedAlert, setShowRedAlert] = useState(false);
-  const [mensajeError, setMensajeError] = useState("");
-  const mensajeErrorInicial = "Las contraseñas deben ser iguales"; // Guardar el mensaje inicial aparte
-  const navigate = useNavigate();
-  const [action, setAction] = useState("");
+    //para olvide mi contraseña
+    //const { setToken} =  useContext(AuthContext)
+    const location = useLocation();
+    const { login } = useContext(AuthContext);
+    const { token } = useParams();
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        watch,
+    } = useForm();
+    const [showRedAlert, setShowRedAlert] = useState(false);
+    const [mensajeError, setMensajeError] = useState("");
+    const mensajeErrorInicial = "Las contraseñas deben ser iguales"; // Guardar el mensaje inicial aparte
+    const navigate = useNavigate();
+    const [action, setAction] = useState("");
+
+  
+
+	const user = getLoggedUser();
+	if (user) console.log("logged user: ", user);
+
+	//onsubmit v2 manejo de status 400:
+	const onSubmit = async (values) => {
+		if (values.password !== values.password2) {
+			setMensajeError("Las contraseñas no coinciden");
+			setShowRedAlert(true);
+			return;
+		}
+
+		console.log("contraseñas iguales, llamar al back");
+		const result = await UsersService.changePassword(token, values.password);
+
+		// CAPTURA DEL ERROR 400 u otros
+		if (result.error) {
+			setMensajeError(result.message); // Guardamos el mensaje que viene del back
+			setShowRedAlert(true);
+			return; // Detenemos la ejecución aquí
+		}
+
+		// SI ES EXITOSO (Continuar con el login)
+		console.log("data to authprovider changePassword: ", result);
+		localStorage.removeItem("user");
+		await login({ user: result.user, token: result.token });
+		navigate(navegacionUser(result.user));
+	};
 
   const navegacionUser = (user) => {
-    if (user.isAdmin) return "/admin";
+    console.log("navegacionUser user: ", user);
+    if (user.isAdmin) {
+      console.log("navegacionUser admin, user.isAdmin: ", user.isAdmin);
+      return "/admin"
+    };
     if (user.idPerfil.name === "Artista") return "/artista";
     if (user.idPerfil.name === "Sala de Ensayo") return "/owner";
-  };
-
-  const user = getLoggedUser();
-  if (user) console.log("logged user: ", user);
-  const onSubmit = async (values) => {
-    console.log("onclick cambiar contrseña");
-    console.log("pass: ", values.password);
-    console.log("pass: ", values.password2);
-    console.log(
-      "values.password === values.password2: ",
-      values.password === values.password2
-    );
-    //check si password son distintas
-    if (values.password === values.password2) {
-      //son iguales entonces cambiar password
-      console.log("contraseñas iguales, llamar al back");
-      const changePassword = await UsersService.changePassword(
-        token,
-        values.password
-      );
-      console.log("data to authprovider changePassword: ", changePassword);
-      localStorage.removeItem("user");
-      await login({ user: changePassword.user, token: changePassword.token });
-
-      navigate(navegacionUser(user));
-    }
-    if (values.password !== values.password2) {
-      setMensajeError(mensajeErrorInicial); // Usar el mensaje inicial guardado
-      setShowRedAlert(true);
-      return;
-    }
   };
   //TODO change password with temporary token passed through params
 
