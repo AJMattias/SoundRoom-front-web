@@ -62,6 +62,20 @@ class ReservasServices {
         return reservas;
     }
 
+    async getReservasPorArtistaYSala(userId, roomId) {
+        const reservas = await api.get(`/reservation/findReservationbyUserAndRoom/${userId}/${roomId}`);
+        console.log("Reservas por artista y sala: ", roomId)
+        console.log("Reservas: ", reservas)
+        return reservas;
+    }
+
+    async getReservasPorArtistaYOwner(userId, ownerId) {
+        const reservas = await api.get(`/reservation/findReservationbyUserAndOwner/${userId}/${ownerId}`);
+        console.log("Reservas por artista y owner: ", ownerId)
+        console.log("Reservas: ", reservas)
+        return reservas;
+    }
+
     async cancelarReserva(id) {
         const reservas = await api.get(`/reservation/cancel/?id=${id}`);
         console.log("Reserva cancelada por artista: ", reservas.canceled)
@@ -72,6 +86,18 @@ class ReservasServices {
         }
     }
 
+    async getReservasPorOwner(ownerId) {
+        try{
+            const reservas = await api.get(`/reservation/findReservationbyOwner/`);
+            //console.log("Reservas por owner: ", ownerId)
+            console.log("Reservas por owner: ", reservas)
+            return reservas;
+        }catch(error){
+            console.error(error);
+            return [];
+        }
+    }
+
 }
 
-export const ReservasService = new ReservasServices();
+export default new ReservasServices();

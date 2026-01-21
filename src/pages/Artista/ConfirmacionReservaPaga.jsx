@@ -5,7 +5,7 @@ import { IoIosCalendar, IoIosTime, IoMdCheckmarkCircleOutline, IoMdMusicalNotes 
 import { MdOutlineAttachMoney } from "react-icons/md"
 import { useParams, useSearchParams  } from 'react-router-dom';
 import { RoomService } from "../../services/SalaDeEnsayoService";
-import { ReservasService } from "../../services/ReservasServices";
+import ReservasService from "../../services/ReservasServices";
 import HeaderReservaEstado from "../../components/HeaderReservaEstado";
 
 const ConfirmacionReservaPaga = () => {
