@@ -65,7 +65,7 @@ const HomeOwnerPage = () => {
 
         const mapeadas = filtradas.map(res => ({
             id: res.id || res._id,
-            fecha: res.date ? new Date(res.date).toLocaleDateString() : 'Sin fecha',
+            fecha: res.date ? new Date(res.date).toLocaleDateString('es-AR', { timeZone: 'UTC' }) : 'Sin fecha',
             cliente: res.idUser ? `${res.idUser.name} ${res.idUser.last_name || ''}` : 'Usuario desconocido',
             sala: res.idRoom?.nameSalaEnsayo || 'Sala no especificada',
             estado: res.canceled === "true" || res.canceled === true ? "Cancelada" : "Activa"

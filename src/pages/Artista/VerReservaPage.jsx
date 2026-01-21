@@ -48,8 +48,10 @@ const VerReservaPage = () => {
                 const formatted = date.toLocaleDateString('es-AR', {
                     day: '2-digit',
                     month: '2-digit',
-                    year: 'numeric'
+                    year: 'numeric',
+                    timeZone: 'UTC'
                 });
+                
                 console.log('Fecha formateada:', formatted);
                 setFormattedDate(formatted);
                 console.log('✅ Reserva cargada. Fecha formateada:', formatted);
