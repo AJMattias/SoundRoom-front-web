@@ -3,6 +3,7 @@
 import PropTypes from 'prop-types';
 
 const Cards_Resumen = ({reservas, ingresos, calificacion, cancelaciones}) => {
+  console.log('Cards_Resumen props:', {reservas, ingresos, calificacion, cancelaciones});
     const cards = [
         {title:"Reservas esta semana", valor: reservas},
         {title:"Ingresos esta semana", valor: ingresos},

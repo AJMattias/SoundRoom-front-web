@@ -10,7 +10,7 @@ import { MdAttachMoney, MdOutlineKeyboardArrowDown, MdRoomPreferences } from "re
 import ReactCalendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { SlCalender, SlClock } from "react-icons/sl"
-import { ReservasService } from "../../services/ReservasServices"
+import ReservasService from "../../services/ReservasServices";
 
 
 

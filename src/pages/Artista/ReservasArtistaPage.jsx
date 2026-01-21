@@ -172,7 +172,7 @@
 
 import { useState, useEffect } from 'react';
 import ArtistHomeReservations from '../../components/ArtistHomeReservations'; 
-import { ReservasService } from "../../services/ReservasServices";
+import ReservasService from "../../services/ReservasServices";
 
 const ReservasPage = () => {
     const [reservasBackend, setReservasBackend] = useState([]);

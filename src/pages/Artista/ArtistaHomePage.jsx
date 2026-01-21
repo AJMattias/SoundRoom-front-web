@@ -499,7 +499,7 @@ import { RoomService } from "../../services/SalaDeEnsayoService";
 import OpinionesArtistaCard from "../../components/OpinionToArtistCard";
 import UsersService from "../../services/UsersService";
 import Swal from "sweetalert2";
-import { ReservasService } from "../../services/ReservasServices";
+import ReservasService from "../../services/ReservasServices";
 
 const ArtistaHomePage = () => {
   const navigate = useNavigate();

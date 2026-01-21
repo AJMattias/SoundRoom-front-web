@@ -13,17 +13,17 @@ import { formatFecha2 } from "../utils/dateHelper.js";
 class SalaDeEnsayoService {
   async getRoomBd(roomId) {
     const room = await api.get("/salasdeensayo/findOne/?id=" + roomId);
-    console.log('getRoomBd service romm:', room);
+    console.log("getRoomBd service romm:", room);
     return room;
   }
 
   async getRoomsByUserIdBd() {
     const user = localStorage.getItem(STORAGE_USER);
-    console.log('logged user: ', user);
+    console.log("logged user: ", user);
     const userId = user ? JSON.parse(user).id : null;
     console.log("userId: ", userId);
     const ownerRooms = await api.get(
-      "/salasdeensayo/findByOwner/?id=" + userId
+      "/salasdeensayo/findByOwner/?id=" + userId,
     );
     console.log(ownerRooms);
     return ownerRooms;
@@ -54,14 +54,16 @@ class SalaDeEnsayoService {
   //   return room;
   // }
 
-  async findByNameBdPaginated(name,page, limit) {
-    let room 
-    if(!page || !limit){
+  async findByNameBdPaginated(name, page, limit) {
+    let room;
+    if (!page || !limit) {
       room = await api.get("/salasdeensayo/findByNamePaginated/?q=" + name);
     } else {
-      room = await api.get(`/salasdeensayo/findByNamePaginated/?q=${name}&page=${page}&limit=${limit}`);
+      room = await api.get(
+        `/salasdeensayo/findByNamePaginated/?q=${name}&page=${page}&limit=${limit}`,
+      );
     }
-    console.log('response busqueda', room)
+    console.log("response busqueda", room);
     return room;
   }
 
@@ -175,7 +177,7 @@ class SalaDeEnsayoService {
         console.error(
           "Error de respuesta de Fetch:",
           response.status,
-          errorData
+          errorData,
         );
 
         // Lanza una ApiException para mantener la consistencia con el manejo de errores de tu frontend.
@@ -184,7 +186,7 @@ class SalaDeEnsayoService {
           errorData.error || "UPLOAD_ERROR",
           errorData.errorCode || "UPLOAD_ERROR_CODE",
           errorData.message || "Ocurrió un error inesperado al subir imágenes.",
-          errorData.arguments
+          errorData.arguments,
         );
       }
 
@@ -198,7 +200,7 @@ class SalaDeEnsayoService {
         throw new ApiException(
           0,
           "NETWORK_ERROR",
-          "Error de red o inesperado al subir imágenes."
+          "Error de red o inesperado al subir imágenes.",
         );
       }
       throw error; // Relanza la ApiException para que sea manejada por el código que llamó a esta función
@@ -238,7 +240,7 @@ class SalaDeEnsayoService {
     precioHora,
     comodidades,
     tipoSala,
-    enabled
+    enabled,
   ) {
     const roomCreated = await api.post("salasdeensayo", {
       nameSalaDeEnsayo: nameSalaDeEnsayo,
@@ -311,6 +313,7 @@ class SalaDeEnsayoService {
   //get las reservas de la semana
   async getReservasSemana() {
     const reservas = await api.get("/reservations/reservasSemana/");
+    console.log("service - reservas de la semana: ", reservas);
     return reservas;
   }
 
@@ -325,24 +328,22 @@ class SalaDeEnsayoService {
     return opiniones;
   }
 
-  async getOpinionesSala(idSala){
-    const opiniones = await api.get("/salaOpiniones/?id="+idSala);
+  async getOpinionesSala(idSala) {
+    const opiniones = await api.get("/salaOpiniones/?id=" + idSala);
     return opiniones;
   }
 
-  async getOpinionesArtista(idArtista){
-    const opiniones = await api.get("/opinionToArtista/?id="+idArtista);
+  async getOpinionesArtista(idArtista) {
+    const opiniones = await api.get("/opinionToArtista/?id=" + idArtista);
     return opiniones;
   }
-
-  
 
   //reportes Salas de ensayo con url como parametro
   async getReportesSalasDeEnsayo(url, idSala, fechaI, fechaH) {
-   console.log('url: ', url)
-   console.log('idSala: ', idSala)
-   console.log('fechaI: ', fechaI)
-   console.log('fechaH: ', fechaH)
+    console.log("url: ", url);
+    console.log("idSala: ", idSala);
+    console.log("fechaI: ", fechaI);
+    console.log("fechaH: ", fechaH);
 
     const reportes = await api.post(url, {
       fechaI: fechaI,
@@ -361,7 +362,6 @@ class SalaDeEnsayoService {
     console.log("reportes reporte sala ensyo: ", reportes);
     return reportes;
   }
-
 
   async descargarPDF(fechaI, fechaH, url, reporte) {
     console.log("fechaI:", fechaI);
@@ -412,6 +412,39 @@ class SalaDeEnsayoService {
     } catch (error) {
       console.error("Error al descargar el PDF con fetch:", error);
     }
+  }
+  async postOpinionSala(roomId, descripcion, estrellas) {
+    console.log(
+      "posting opinion sala service roomId, descripcion, estrellas: ",
+      roomId,
+      descripcion,
+      estrellas,
+    );
+    const response = await api.post("/salasdeensayo/postOpinionASala/", {
+      idRoom: roomId,
+      descripcion: descripcion,
+      estrellas: estrellas,
+    });
+    console.log("response post opinion sala:", response);
+    return response;
+  }
+
+  async actualizarOpinionSala(opinionId, descripcion, estrellas) {
+    console.log(
+      "updating opinion sala service opinionId, descripcion, estrellas: ",
+      opinionId,
+      descripcion,
+      estrellas,
+    );
+    const response = await api.put(
+      "/salasdeensayo/updateOpinion/?id=" + opinionId,
+      {
+        descripcion: descripcion,
+        estrellas: estrellas,
+      },
+    );
+    console.log("response actualizar opinion sala:", response);
+    return response;
   }
 }
 
