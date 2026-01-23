@@ -46,6 +46,7 @@ import EditarPerfil from './pages/EditarPerfil';
 import ChangePasswordScreen from './pages/Auth/ChangePasswordScreen';
 import VerReservaPage from './pages/Artista/VerReservaPage';
 import ArtistaPage from './pages/SalaDeEnsayo/ArtistaPage';
+import VerReservaPageSdE from './pages/SalaDeEnsayo/VerReservaPageSdE';
 
 
 function App() {
@@ -95,8 +96,8 @@ function App() {
           <Route path="/owner/reportes" element={<Reportes />} />
           <Route path="/owner/calificaciones" element={<CalificacionesPage />} />
           <Route path="/owner/reservaciones" element={<ReservasPage />} />
-          <Route path="/owner/ver-artista/:id" element={<ArtistaPage />} />
-          <Route path="/owner/ver-reserva/:idReserva" element={<VerReservaPage />} />
+          <Route path="/owner/ver-artista/:id/:idOwner" element={<ArtistaPage />} />
+          <Route path="/owner/ver-reserva/:idReserva" element={<VerReservaPageSdE />} />
         </Route>
       </Route>
       
