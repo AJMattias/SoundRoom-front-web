@@ -6,29 +6,30 @@ const ArtistRoutes = () => {
   
   const { authState } = useContext(AuthContext);
 
-  const perfilName = authState.user?.user?.idPerfil?.name?.trim().toLowerCase();
-  const isOwner = perfilName === "artista";
-
-  console.log("autenticado:", authState.isAuthenticated);
-  console.log("perfilName:", perfilName);
-  console.log("isOwner:", isOwner);
+  
 
   // Mientras se carga el authState
-  if (!authState.user) {
-    return <div>Cargando...</div>;
-  }
+  // if (!authState.user) {
+  //   return <div>Cargando...</div>;
+  // }
 
   // Si no está autenticado → redirigir a login
-  if (!authState.isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
+    const perfilName = authState.user?.user?.idPerfil?.name?.trim().toLowerCase();
+    const isArtist = perfilName === "artista";
 
-  // Si está autenticado pero no es owner → redirigir a otra ruta (ej. home)
-  if (!isOwner) {
+    console.log("autenticado:", authState.isAuthenticated);
+    console.log("perfilName:", perfilName);
+    console.log("isArtist:", isArtist);
+    if (!authState.isAuthenticated) {
+      return <Navigate to="/login" />;
+    }
+
+  // Si está autenticado pero no es artista → redirigir a otra ruta (ej. home)
+  if (!isArtist) {
     return <Navigate to="/" />;
   }
 
-  // Si está autenticado y es owner → renderizar rutas protegidas
+  // Si está autenticado y es artista → renderizar rutas protegidas
   return <Outlet />;
 };
 
