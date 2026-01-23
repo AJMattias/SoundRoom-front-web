@@ -6,20 +6,29 @@ import { useContext } from "react";
 export const AdminRoutes = () => {
    
     const { authState, getUser } = useContext(AuthContext);
+    const loggedUser = getUser();
 
-
-    //gemini
-    const loggedUser = getUser()
-    console.log('adminRoute.jsx - isAdmin.user.isAdmin: ', loggedUser)
-    if (!authState.isAuthenticated) {
+    if (!authState.isAuthenticated || !loggedUser) {
+        console.log('AdminRoutes: No autenticado, redirigiendo a login');
         return <Navigate to="/login" replace />;
     }
-    if(!loggedUser.user.isAdmin){
+
+    //gemini
+    const isAdmin = loggedUser?.user?.isAdmin;
+
+    if (!isAdmin) {
+        console.log('AdminRoutes: No es admin, redirigiendo a home');
         return <Navigate to="/" replace />;
     }
-    if(loggedUser.user.isAdmin){
-        console.log(loggedUser.user.isAdmin)
-        return <Outlet />
-    }
+
+    // 3. Si pasó los filtros anteriores, es Admin
+    return <Outlet />;
 
 }
+
+
+
+
+
+
+

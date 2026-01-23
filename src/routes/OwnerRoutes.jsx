@@ -34,25 +34,38 @@ import { AuthContext } from "../contexts/AuthContext";
 const OwnerRoutes = () => {
   const { authState } = useContext(AuthContext);
 
-  const perfilName = authState.user?.user?.idPerfil?.name?.trim().toLowerCase();
-  const isOwner = perfilName === "sala de ensayo";
+  // const perfilName = authState.user?.user?.idPerfil?.name?.trim().toLowerCase();
+  // const isOwner = perfilName === "sala de ensayo";
 
-  console.log("autenticado:", authState.isAuthenticated);
-  console.log("perfilName:", perfilName);
-  console.log("isOwner:", isOwner);
+  // console.log('Owner Routes consoles logs:')
+  // console.log('authState: ', authState)
+  // console.log("autenticado:", authState.isAuthenticated);
+  // console.log("perfilName:", perfilName);
+  // console.log("isOwner:", isOwner);
 
   // Mientras se carga el authState
-  if (!authState.user) {
-    return <div>Cargando...</div>;
-  }
+  // if (!authState.user) {
+  //   return <div>Cargando...</div>;
+  // }
 
   // Si no está autenticado → redirigir a login
-  if (!authState.isAuthenticated) {
+  if (!authState.isAuthenticated || !authState.user) {
+    console.log("🚫 No autenticado. Redirigiendo a login...");
     return <Navigate to="/login" />;
   }
 
+  const perfilName = authState.user?.user?.idPerfil?.name?.trim().toLowerCase();
+  const isOwner = perfilName === "sala de ensayo";
+
+  console.log("Owner Routes Check:", { 
+    isAuthenticated: authState.isAuthenticated, 
+    perfilName, 
+    isOwner 
+  });
+
   // Si está autenticado pero no es owner → redirigir a otra ruta (ej. home)
   if (!isOwner) {
+    console.log("⚠️ No es Owner. Redirigiendo a home...");
     return <Navigate to="/" />;
   }
 
@@ -61,3 +74,6 @@ const OwnerRoutes = () => {
 };
 
 export default OwnerRoutes;
+
+
+
