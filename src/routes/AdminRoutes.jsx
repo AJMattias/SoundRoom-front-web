@@ -25,3 +25,10 @@ export const AdminRoutes = () => {
     return <Outlet />;
 
 }
+
+
+
+
+
+
+
