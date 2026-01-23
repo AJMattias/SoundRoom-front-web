@@ -65,8 +65,8 @@ axiosInstance.interceptors.response.use(
  * @returns {String} URL absoluta.
  */
 function transformUrl(path) {
-    //return getBaseUrl() + (path.startsWith("/") ? path : `/${path}`);
-    return getProdctionUrl() + (path.startsWith("/") ? path : `/${path}`);
+    return getBaseUrl() + (path.startsWith("/") ? path : `/${path}`);
+    //return getProdctionUrl() + (path.startsWith("/") ? path : `/${path}`);
 }
 
 /**

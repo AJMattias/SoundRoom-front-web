@@ -23,19 +23,6 @@ const VerReservaPage = () => {
     
     console.log('id Reserva: ', idReserva);
 
-
-
-    // const getSala = async (id) => {
-    //     try {
-    //         const response = await RoomService.getRoomBd(id);
-    //         setSala(response);
-    //         console.log('✅ Sala cargada:', response);
-    //     } catch (error) {
-    //         console.error('❌ Error cargando sala:', error);
-    //         setError('Error al cargar los datos de la sala');
-    //     }
-    // }
-
     const getReserva = async (id) => {
          try {
             const response = await ReservasService.getReserva(id);

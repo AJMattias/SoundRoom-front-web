@@ -90,28 +90,6 @@ const HomeOwnerPage = () => {
     }
     };
 
-  // //fiiltrar reservas con fecha mayor a hoy
-  // const filtrarReservasFuturas = () => {
-  //   const today = new Date();
-  //   const próximas = reservas.filter(
-  //     (reserva) => new Date(reserva.fecha) >= today,
-  //   );
-  //   setReservas(próximas);
-  // };
-
-  // const mapearReservas = () => {
-  //     const reservasMapeadas = reservas.map((reserva) => ({
-  //         id: reserva.id,
-  //         fecha: reserva.date,
-  //         cliente: reserva.idUser.name + " " + reserva.idUser.last_name,
-  //         sala: reserva.idRoom.nameSalaEnsayo,
-  //         //si reserva.canceled es true, estado es "Cancelada", si no "Activa"
-  //         estado: reserva.canceled ? "Cancelada" : "Activa",
-  //     }));
-  //     setReservasTyped(reservasMapeadas);
-  //     console.log('reservas mapeadas: ', reservasTyped);
-  // }
-
     useEffect(() => {
         if (user?.id) {
             fetchData();

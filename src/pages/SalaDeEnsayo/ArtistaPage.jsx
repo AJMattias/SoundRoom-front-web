@@ -17,10 +17,13 @@ const ArtistaPage = () => {
     useEffect(() => {
     setIdArtista(params.id);
     //buscar artista por id
+    const id = params.id;
+    const idOwner = params.idOwner;
 
     const fetchArtistaData = async () => {
         try {
-            const response = await UsersService.getUserBd(idArtista);
+            console.log('id artista: ', id)
+            const response = await UsersService.getUserBd(id);
             console.log('Respuesta al buscar artista:', response);
             if (!response.ok) {
                 setError("Error al obtener el artista, intente nuevamente más tarde.");
@@ -34,7 +37,8 @@ const ArtistaPage = () => {
     }
 
     const buscarSiPuedeOpinar = async () => {
-        const reservasResponse = await ReservasServices.getReservasPorArtistaYOwner(idArtista, artista.ownerId);
+        console.log('id del owner: ', idOwner)
+        const reservasResponse = await ReservasServices.getReservasPorArtistaYOwner(id, idOwner);
         console.log("Reservas del artista en owner: ", reservasResponse)
         setReservas(reservasResponse);
         if(reservasResponse.length > 0){
