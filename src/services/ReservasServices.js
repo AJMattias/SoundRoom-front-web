@@ -27,7 +27,8 @@ class ReservasServices {
     }
 
     async getReservasOwner() {
-        const reservas = await api.get("/reservations/findReservationbyOwner/");
+        const reservas = await api.get("/reservation/findReservationbyOwner/");
+        console.log("Service Reservas por owner: ", reservas)
         return reservas;
     }
 

@@ -4,8 +4,8 @@ const OpinionCard = ({ opinion, idUserLogged, puedoActualizar }) => {
   console.log('opinion en OpinionCard: ', opinion);
   return (
     <div
-      className="card d-flex flex-row mb-5" // Use d-flex and flex-row for horizontal layout
-      style={{ width: '100%', height: '12rem', overflow: 'hidden' }} // Set fixed height and hide overflow
+      className="card d-flex flex-row mb-3" // Use d-flex and flex-row for horizontal layout
+      style={{ width: '100%', height: '10rem', overflow: 'hidden' }} // Set fixed height and hide overflow
       onClick={() => console.log('navegar a usuario con id y nombre: ', opinion.idUser._id , opinion.idUser.name)}
     >
       {/* Image Column */}
