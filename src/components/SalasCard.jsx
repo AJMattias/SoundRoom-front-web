@@ -7,12 +7,12 @@ const SalasCard = (room) => {
   return (
     <div className="border border-1 border-tertiary rounded rounded-3 bg-body-white p-2 mb-3">
         <div className="row d-flex align-items-center gap-3 justify-content-center">
-            <div className="col-10">
+            <div className="col-10 mt-3">
                 <img 
                     src={sala.imagenes[0].url ||"https://placehold.co/600x100" }
                     alt="Sala de ensayo" 
                     className="img-fluid rounded-3"
-                    style={{width: "600px%", height: "200px", objectFit: "cover"}} />
+                    style={{width: "700px", height: "200px", objectFit: "cover"}} />
             </div>
             <div className="col-10">
                 <div className=" d-flex">
