@@ -61,7 +61,7 @@ const Opinar = ({ titulo, onClick, onChange, value, rating, setRating, showError
             onChange={(e) => onChange(e.target.value)} // Pasamos solo el texto al padre
           ></textarea>
           
-          {puedoOpinar == true && puedoActualizarOpinion == false &&(
+          {/* {puedoOpinar == true && puedoActualizarOpinion == false &&(
             <button 
             className="btn btn-warning text-dark px-4 py-2"
             onClick={onClick}
@@ -77,6 +77,25 @@ const Opinar = ({ titulo, onClick, onChange, value, rating, setRating, showError
           >
             Actualizar Opinión
           </button>
+          )} */}
+          {/* BOTÓN ENVIAR: Solo si puede opinar y NO estamos editando */}
+          {puedoOpinar && !puedoActualizarOpinion && (
+            <button 
+              className="btn btn-warning text-dark px-4 py-2"
+              onClick={onClick}
+            >
+              Enviar Opinión
+            </button>
+          )}
+
+          {/* BOTÓN ACTUALIZAR: Siempre que estemos en modo edición */}
+          {puedoActualizarOpinion && (
+            <button 
+              className="btn btn-warning text-dark px-4 py-2"
+              onClick={actualizar}
+            >
+              Actualizar Opinión
+            </button>
           )}
         </div>
       </div>

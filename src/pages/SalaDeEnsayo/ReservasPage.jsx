@@ -1,129 +1,336 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react"
-import { RoomService } from "../../services/SalaDeEnsayoService"
-import ReservasCard from "../../components/ReservasCard";
+
+import { useState, useEffect } from 'react';
+import ArtistHomeReservations from '../../components/ArtistHomeReservations'; 
+import ReservasService from "../../services/ReservasServices";
+import SalaReservasCard from '../../components/SalaReservasCard';
+import Swal from 'sweetalert2';
 
 const ReservasPage = () => {
-
-    const seleccionarReservasOpciones = [
-        { value: 'semana', label: 'Última Semana' },
-        { value: 'mes', label: 'Último Mes' },
-        { value: 'anio', label: 'Último Año' },
-        { value: 'canceladas', label: 'Canceladas' },
-          { value: 'rango_fechas', label: 'RangoFechas' },
-    ];
-    const [reservas, setReservas] = useState([])
-    const [selectedReservasOpcion, setSelectedReservasOpcion] = useState('');
-    const [reservasData, setReservasData] = useState(null); // Estado para la sala seleccionada
-    const [selectedCanceladas, setSelectedCanceladas] = useState(false);
-    const [selectedTodasSalas, setSelectedTodasSalas] = useState(true);
-    //
-    const [misSalas, setMisSalas] = useState([])
-    const [selectedSalaData, setSelectedSalaData] = useState(null); // Estado para la sala seleccionada
+    const [reservasBackend, setReservasBackend] = useState([]);
+    const [loading, setLoading] = useState(true);
     
-    
-    const getMisalas = async () => {
-        const salas = await RoomService.getRoomsByUserIdBd()
-        console.log(salas)
-        setMisSalas(salas)
-    }
-    const getReservasMisSalas = async () => {
-        const salas = await RoomService.getReservasOwner()
-        console.log(salas)
-        setReservas(salas)
-    }
+    // 1. Estado para la pestaña activa
+    const [seccionActiva, setSeccionActiva] = useState('Futuras'); 
 
-    const getReservasRangoFechas = async (fechaInicio, fechaFin) => {
-        const salas = await RoomService.getReservasRangoFechas(fechaInicio, fechaFin)
-        console.log(salas)
-        setReservasData(salas)
-    }
+    // 2. Estado para la lista filtrada y formateada que se pasará como prop
+    const [reservasSelected, setReservasSelected] = useState([]);
 
-    const handleSalaChange = (e) => {
-        setSelectedSalaData(null);
-        setSelectedTodasSalas(false);
-        const salaId = e.target.value;
-        console.log('salaId: ', salaId)
-        const salaSeleccionada = misSalas.find(sala => sala.id === salaId);
-        setSelectedSalaData(salaSeleccionada);
-        console.log(selectedSalaData)
+    /**
+     * Función auxiliar para obtener el objeto Date preciso de inicio de la reserva.
+     * (Necesaria para la lógica de filtrado entre Futuras/Históricas)
+     */
+    const getReservaStartDateTime = (reserva) => {
+        try {
+            // Verificar si date es string o Date
+            let dateString;
+            if (reserva.date instanceof Date) {
+                dateString = reserva.date.toISOString().substring(0, 10);
+            } else if (typeof reserva.date === 'string') {
+                dateString = reserva.date.substring(0, 10);
+            } else {
+                console.warn('Tipo de fecha no reconocido:', reserva.date);
+                return new Date(); // Fecha actual como fallback
+            }
+            
+            // Si no tiene hsStart, usar '00:00' como default
+            const horaStart = reserva.hsStart || '00:00';
+            return new Date(`${dateString}T${horaStart}:00`); 
+        } catch (error) {
+            console.error('Error al obtener fecha de inicio:', error, reserva);
+            return new Date(); // Fecha actual como fallback
+        }
     };
 
-    const handleOpcionChange = (e) => {
-        setSelectedReservasOpcion(e.target.value);
+    /**
+     * Función para aplicar el formato de fecha con corrección UTC para la visualización.
+     * Crea una nueva propiedad 'dateDisplay' y deja 'date' intacta para el filtrado.
+     */
+    const parseReservasFechas = (listToParse) => {
+        if (!listToParse || listToParse.length === 0) {
+            return [];
+        }
         
+        return listToParse.map((reserva) => {
+            try {
+                let fechaDate;
+                
+                // Manejar diferentes formatos de fecha
+                if (reserva.date instanceof Date) {
+                    fechaDate = reserva.date;
+                } else if (typeof reserva.date === 'string') {
+                    if (reserva.date.includes('T')) {
+                        fechaDate = new Date(reserva.date);
+                    } else {
+                        fechaDate = new Date(reserva.date + 'T00:00:00');
+                    }
+                } else if (typeof reserva.date === 'number') {
+                    fechaDate = new Date(reserva.date);
+                } else {
+                    console.warn('Tipo de fecha no reconocido:', reserva.date);
+                    return {
+                        ...reserva,
+                        dateDisplay: 'Fecha inválida'
+                    };
+                }
+                
+                // Verificar si la fecha es válida
+                if (isNaN(fechaDate.getTime())) {
+                    console.warn('Fecha inválida:', reserva.date);
+                    return {
+                        ...reserva,
+                        dateDisplay: 'Fecha inválida'
+                    };
+                }
+                
+                // Formatear para mostrar
+                const year = fechaDate.getFullYear();
+                const month = fechaDate.getMonth() + 1;
+                const day = fechaDate.getDate();
+                const fechaFormateada = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
 
+                return {
+                    ...reserva,
+                    date: fechaDate, // Mantener como Date para filtrado
+                    dateDisplay: fechaFormateada, 
+                };
+            } catch (error) {
+                console.error('Error al parsear fecha:', error, reserva);
+                return {
+                    ...reserva,
+                    dateDisplay: 'Error en fecha'
+                };
+            }
+        });
+    };
+
+    // FUNCIÓN ORIGINAL CON AXIOS - LA MANTENEMOS IGUAL
+    const getMisReservas = async () => {        
+        try {
+            setLoading(true);
+            const reservas = await ReservasService.getReservasOwner();
+            
+            // Si axios devuelve los datos en .data
+            const reservasData = reservas.data || reservas;
+            console.log('Reservas obtenidas del backend:', reservasData);
+            
+            // Parsear las fechas inicialmente
+            const reservasParseadas = parseReservasFechas(reservasData || []);
+            setReservasBackend(reservasParseadas);
+            
+        } catch (error) {
+            console.error('Error al obtener reservas:', error);
+            setReservasBackend([]);
+        } finally {
+            setLoading(false);
+        }
     }
+
+    const cancelarReserva = async (id) => {
+        const response = await ReservasService.cancelarReserva(id);
+        console.log('Cancelación de reserva:', response);
+        getMisReservas(); // Refrescar la lista de reservas
+    }
+
+    const handleCancelar = async (idReserva) => {
+        Swal.fire({
+        title: "¿Estás seguro de cancelar reserva?",
+        text: `Esta accionn es irreversible`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33333",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Sí, eliminar",
+        }).then((result) => {
+        if (result.isConfirmed) {
+            console.log("reserva a eliminar:", idReserva)
+            cancelarReserva(idReserva)
+        }
+        })
+    }
+
+    const handleCancelarFalse = async (idReserva) => {
+        Swal.fire({
+        title: "No se pudo cancelar reserva",
+        text: `Intentelo nuevamente mas tarde`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33333",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Entendido",
+        }).then((result) => {
+        if (result.isDismissed) {
+            console.log("reserva no se pudo cancelar:", idReserva)
+        }
+        })
+    }
+
+    // Cargar reservas al montar el componente
     useEffect(() => {
-        getReservasMisSalas()
-        getMisalas()
-    }, [])
+        getMisReservas();
+    }, []);
 
+    // --- LÓGICA DE FILTRADO Y FORMATO (Corre en cada cambio de pestaña o de reservas) ---
+    useEffect(() => {
+        if (reservasBackend.length === 0) {
+            setReservasSelected([]);
+            return;
+        }
 
+        const now = new Date(); 
+        let filteredList = [];
 
-  return (
-<div className='container mx-5'>
-        <div className="col-11 bg-white d-flex flex-column rounded-3 bg-light p-5 mt-1">
-            <div>
-                <h2>Reservas a mis salas</h2>
-            </div>
-            <div className="gap-2 align-content-center justify-content-center mt-3col-2">
-              <div className="d-flex w-75">
-                <h5>Selecciona una sala</h5>
-                <div className="d-flex w-75">
-                    <select
-                    aria-label="Default select example"
-                    className=" w-50 form-select form-select-sm rounded-3 border-2 border-warning p-1 me-3"
-                    onChange={handleSalaChange}
-                    >
-                    <option value="" disabled selected>Elige una sala</option>
-                    {misSalas.map((sala, index) => (
-                    <option key={index} value={sala.id}                className="color-warning text-start">
-                        {sala.nameSalaEnsayo}
-                        </option>
-                    ))}
-                    </select>
+        if (seccionActiva === 'Futuras') {
+            // FUTURAS: No canceladas Y (fecha Y hora de inicio) es MAYOR a la actual
+            filteredList = reservasBackend.filter(reserva => {
+                try {
+                    const reservaStart = getReservaStartDateTime(reserva);
+                    const isCanceled = reserva.canceled === true || reserva.estado === 'cancelado';
+                    return !isCanceled && reservaStart > now;
+                } catch (error) {
+                    console.error('Error filtrando reserva futura:', error, reserva);
+                    return false;
+                }
+            });
+
+        } else if (seccionActiva === 'Canceladas') {
+            // CANCELADAS: La propiedad 'canceled' es true o estado 'cancelado'
+            filteredList = reservasBackend.filter(reserva => 
+                reserva.canceled === "true" || reserva.estado === 'cancelado'
+            );
+            
+        } else if (seccionActiva === 'Historicas') {
+            // HISTÓRICAS: No canceladas Y (fecha Y hora de inicio) es MENOR a la actual
+            filteredList = reservasBackend.filter(reserva => {
+                try {
+                    const reservaStart = getReservaStartDateTime(reserva);
+                    const isCanceled = reserva.canceled === "true" || reserva.estado === 'cancelado';
+                    return !isCanceled && reservaStart < now;
+                } catch (error) {
+                    console.error('Error filtrando reserva histórica:', error, reserva);
+                    return false;
+                }
+            });
+        }
+        
+        console.log(`Reservas ${seccionActiva} filtradas:`, filteredList.length);
+        
+        // Ordenar por fecha (más reciente primero para futuras, más antiguas primero para históricas)
+        filteredList.sort((a, b) => {
+            const dateA = getReservaStartDateTime(a);
+            const dateB = getReservaStartDateTime(b);
+            
+            if (seccionActiva === 'Futuras') {
+                return dateA - dateB; // Ascendente (próximas primero)
+            } else {
+                return dateB - dateA; // Descendente (más recientes primero)
+            }
+        });
+
+        // Actualizamos el estado que se pasa al componente hijo
+        setReservasSelected(filteredList);
+        
+    }, [seccionActiva, reservasBackend]); 
+    
+    // --- MANEJADORES DE INTERFAZ ---
+
+    const handleClick = (seccion) => {
+        setSeccionActiva(seccion);
+    };
+
+    const getTabClasses = (seccion) => {
+        let classes = 'mb-0 p-1'; 
+        
+        if (seccionActiva === seccion) {
+            classes += ' border-bottom border-warning fw-bold text-dark';
+        } else {
+            classes += ' text-muted';
+        }
+        return classes;
+    };
+    
+    // --- RENDERIZADO ---
+
+    if (loading) {
+        return (
+            <div className="w-100 d-flex justify-content-center align-items-center" style={{ height: '300px' }}>
+                <div className="spinner-border text-warning" role="status">
+                    <span className="visually-hidden">Cargando reservas</span>
                 </div>
-              </div>
-              <div className="d-flex w-75">
-                <h5>Selecciona una opcion</h5>
-                <div className="d-flex w-75">
-                    <select
-                    aria-label="Default select example"
-                    className=" w-50 form-select form-select-sm rounded-3 border-2 border-warning p-1 me-3"
-                    onChange={handleSalaChange}
+                <span className="ms-3">Cargando reservas...</span>
+            </div>
+        );
+    }
+
+    return (
+        <div className="w-100 ps-5 pt-3">
+            <div className="w-100 d-flex flex-column px-4">
+                <div className="mb-4">
+                    <h2>Reservas a mis salas</h2>
+                </div>
+                
+                {/* Pestañas de Filtrado */}
+                <div className="d-flex flex-column bg-white border border-2 border-tertiary rounded-3 p-3 mb-3">
+                    <div className="row align-items-center mb-3">
+
+                        {/* FUTURAS */}
+                        <div 
+                            className="col-auto" 
+                            onClick={() => handleClick('Futuras')}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <p className={getTabClasses('Futuras')}>Futuras</p>
+                        </div>
+
+                        {/* CANCELADAS */}
+                        <div 
+                            className="col-auto mx-4" 
+                            onClick={() => handleClick('Canceladas')}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <p className={getTabClasses('Canceladas')}>Canceladas</p>
+                        </div>
+
+                        {/* HISTORICAS */}
+                        <div 
+                            className="col-auto" 
+                            onClick={() => handleClick('Historicas')}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <p className={getTabClasses('Historicas')}>Históricas</p>
+                        </div>
+
+                    </div>
+                  
+                  <div>
+                      {reservasSelected.length > 0 ? (
+                          <SalaReservasCard reservasSelected={reservasSelected} cancelarReserva={handleCancelar} />
+                      ) : (
+                          <div className="alert alert-info mt-3">
+                              No hay reservas {seccionActiva.toLowerCase()}.
+                          </div>
+                      )}
+                  </div>
+                </div>
+
+                {/* Botón para refrescar */}
+                <div className="mt-3">
+                    <button 
+                        className="btn btn-outline-warning"
+                        onClick={getMisReservas}
+                        disabled={loading}
                     >
-                    <option value="" disabled selected>Elige una sala</option>
-                    {misSalas.map((sala, index) => (
-                    <option key={index} value={sala.id}                className="color-warning text-start">
-                        {sala.nameSalaEnsayo}
-                        </option>
-                    ))}
-                    </select>
-                    <button
-                    className="btn btn-outline-warning btn-sm text-dark"
-                    onClick={ () => setSelectedReservasOpcion("Todas") }
-                    >
-                    Ver todas
+                        {loading ? (
+                            <>
+                                <span className="spinner-border spinner-border-sm me-2"></span>
+                                Actualizando...
+                            </>
+                        ) : 'Actualizar reservas'}
                     </button>
                 </div>
-              </div>
             </div>
-            <hr className="color-warning" />
-            <div>
-                {selectedTodasSalas && 
-                (<h3>Opiniones a mis salas</h3>) }
-                { !selectedTodasSalas && (
-                  <h3>Opiniones a mi sala: {selectedSalaData.nameSalaEnsayo}</h3>
-                )}
-              <div className="col-11 p-2">
-                  <ReservasCard sala={reservas}  />
-              </div>
-            </div>
-            
         </div>
-    </div>
-  )
+    );
 }
 
-export default ReservasPage
+export default ReservasPage;

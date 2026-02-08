@@ -9,6 +9,7 @@ import OpinionCard from "../../components/OpinionCard";
 import { useNavigate } from "react-router-dom";
 import Cards_Resumen from "../../components/Cards_Resumen";
 import ReservasService from "../../services/ReservasServices";
+import OpinionToSala from "../../components/OpinionToSala";
 
 const HomeOwnerPage = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const HomeOwnerPage = () => {
 
   const [salasOwner, setSalasOwner] = useState([]);
   const [nextReservations, setNextReservations] = useState([]);
-  const [opiniones, setOpiniones] = useState([]);
+  const [opiniones, setOpiniones] = useState(null);
   const [promedio, setPromedio] = useState(0);
   const [gananciasSemana, setGananciasSemana] = useState(0);
   const [reservasSemana, setReservasSemana] = useState(0);
@@ -77,7 +78,7 @@ const HomeOwnerPage = () => {
         setGananciasSemana(gananciasRes?.data || gananciasRes || { ganancias: 0 });
         setReservasSemana(reservasSemanaRes?.data || reservasSemanaRes || { totalReservas: 0 });
         setPromedio(promedioRes?.data || promedioRes || 0);
-        setOpiniones(opinionesRes?.data || opinionesRes || []);
+        setOpiniones(opinionesRes|| null );
         
         setReservas(filtradas);
         setReservasTyped(mapeadas);
@@ -183,13 +184,11 @@ const HomeOwnerPage = () => {
         </div>
         <div className="border border-border-secondary rounded-3 py-3 px-3 mt-4">
           <h4>Opiniones</h4>
-          {opiniones && opiniones.length > 0 ? (
-            opiniones.map((opinion, index) => (
-              <OpinionCard key={index} opinion={opinion} />
-            ))
-          ) : (
-            <p>No hay opiniones disponibles para tus salas.</p>
-          )}
+          {opiniones ? (
+            <OpinionToSala opinions={opiniones} />
+          ):(
+            <p>No hay opiniones disponibles para tus salas.</p>)
+          }
         </div>
       </div>
     </div>

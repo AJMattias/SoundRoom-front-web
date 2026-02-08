@@ -25,38 +25,38 @@ const VerReservaPageSdE = () => {
 
   console.log('id Reserva: ', idReserva);
   
-      const getReserva = async (id) => {
-           try {
-              const response = await ReservasService.getReserva(id);
-              setReserva(response);
-              
-              // Formatear fecha correctamente
-              if (response.date) {
-                  const date = new Date(response.date);
-                  console.log('Fecha original de la reserva:', response.date);
-                  const formatted = date.toLocaleDateString('es-AR', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric',
-                      timeZone: 'UTC'
-                  });
-                  
-                  console.log('Fecha formateada:', formatted);
-                  setFormattedDate(formatted);
-                  console.log('✅ Reserva cargada. Fecha formateada:', formatted);
-              }
-              setSala(response.idRoom);
-              console.log('✅ Reserva cargada:', response);
-              console.log('✅ Sala cargada:', response.idRoom);
-              setArtista(response.idUser);
-              console.log('✅ Artista cargado:', response.idUser);
-              
-          } catch (error) {
-              console.error('❌ Error cargando reserva:', error);
-              setError('Error al cargar los datos de la reserva');
-          }
+    const getReserva = async (id) => {
+        try {
+            const response = await ReservasService.getReserva(id);
+            setReserva(response);
+            
+            // Formatear fecha correctamente
+            if (response.date) {
+                const date = new Date(response.date);
+                console.log('Fecha original de la reserva:', response.date);
+                const formatted = date.toLocaleDateString('es-AR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    timeZone: 'UTC'
+                });
+                
+                console.log('Fecha formateada:', formatted);
+                setFormattedDate(formatted);
+                console.log('✅ Reserva cargada. Fecha formateada:', formatted);
+            }
+            setSala(response.idRoom);
+            console.log('✅ Reserva cargada:', response);
+            console.log('✅ Sala cargada:', response.idRoom);
+            setArtista(response.idUser);
+            console.log('✅ Artista cargado:', response.idUser);
+            
+        } catch (error) {
+            console.error('❌ Error cargando reserva:', error);
+            setError('Error al cargar los datos de la reserva');
+        }
       
-      }
+    }
   
        // Verificar estado del pago con el backend
       const verificarEstadoPago = async () => {
@@ -252,7 +252,7 @@ const VerReservaPageSdE = () => {
                                 <div className="d-flex flex-column col border border-bg-secondary rounded-top-3 col-10">
   
                                     <div className="d-flex bg-body-secondary col-12 rounded-top-3 px-3 py-2 align-items-center"
-                                      onClick={() => navigate('/owner/ver-artista/' + artista._id + '/' + reserva.idOwner)}
+                                      onClick={() => navigate('/owner/ver-artista/' + artista._id)}
                                       style={{ cursor: 'pointer' }}
                                       >
                                         {/* <IoMdMusicalNotes size={35} className="text-warning me-3 mt-2" />

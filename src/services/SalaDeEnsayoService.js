@@ -325,7 +325,8 @@ class SalaDeEnsayoService {
 
   async getOpinionesMisSalas() {
     const opiniones = await api.get("/salasdeensayo/opinionesAMisSalas/");
-    return opiniones;
+    console.log("opiniones de mis salas service: ", opiniones);
+    return opiniones.opiniones;
   }
 
   async getOpinionesSala(idSala) {
@@ -335,6 +336,7 @@ class SalaDeEnsayoService {
 
   async getOpinionesArtista(idArtista) {
     const opiniones = await api.get("/opinionToArtista/?id=" + idArtista);
+    console.log("opiniones artista service: ", opiniones)
     return opiniones;
   }
 
@@ -429,6 +431,22 @@ class SalaDeEnsayoService {
     return response;
   }
 
+  async postOpinionArtista(artistaId, descripcion, estrellas) {
+    console.log(
+      "posting opinion sala service roomId, descripcion, estrellas: ",
+      artistaId,
+      descripcion,
+      estrellas,
+    );
+    const response = await api.post("/salasdeensayo/createOpinionToArtist/", {
+      idArtist: artistaId,
+      descripcion: descripcion,
+      estrellas: estrellas,
+    });
+    console.log("response post opinion sala:", response);
+    return response;
+  }
+
   async actualizarOpinionSala(opinionId, descripcion, estrellas) {
     console.log(
       "updating opinion sala service opinionId, descripcion, estrellas: ",
@@ -445,6 +463,11 @@ class SalaDeEnsayoService {
     );
     console.log("response actualizar opinion sala:", response);
     return response;
+  }
+
+  async getoOpinionesAmisSalas(){
+    const opiniones = await api.get("/salasdeensayo/opinionesAMisSalas/");
+    return opiniones;
   }
 }
 

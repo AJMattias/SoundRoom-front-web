@@ -111,7 +111,7 @@ const Reportes = () => {
   }
   
   return (
-    <div className="ontainer bg-body-secondary rounded-3 col-10 ms-5 py-3">
+    <div className="ontainer bg-body rounded-4 col-10 ms-5 py-3 px-4">
        {mensajeError && (
         <Alerta mensaje={mensajeError} onClose={cerrarAlerta} />
       )}
